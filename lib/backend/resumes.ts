@@ -2,7 +2,7 @@ import "server-only";
 import path from "path";
 import { firestore } from "./firebase";
 
-const MAX_BYTES = 8 * 1024 * 1024;
+const MAX_BYTES = 3 * 1024 * 1024;
 const CHUNK_BYTES = 700_000;
 const RESUME_COLLECTION = "resume_files";
 const ALLOWED_EXT = new Set([".pdf", ".doc", ".docx", ".rtf", ".odt", ".txt"]);
@@ -42,7 +42,7 @@ export async function saveResume(file: File) {
     throw new Error("Resume file is empty");
   }
   if (file.size > MAX_BYTES) {
-    throw new Error("Resume must be 8MB or smaller");
+    throw new Error("Resume must be 3MB or smaller");
   }
   const ext = extensionOf(file.name);
   if (!ALLOWED_EXT.has(ext)) {

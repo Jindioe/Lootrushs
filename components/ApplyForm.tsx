@@ -4,6 +4,8 @@ import type { FormEvent, ReactNode } from "react";
 import { useState } from "react";
 import { ApplyCaptcha } from "@/components/ApplyCaptcha";
 
+const MAX_RESUME_BYTES = 3 * 1024 * 1024;
+
 const fieldClass =
   "mt-2 w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-ink outline-none transition focus:border-gold";
 
@@ -40,6 +42,13 @@ export function ApplyForm({ role, roleSlug = "" }: { role: string; roleSlug?: st
     setStatus("saving");
     setError("");
     const form = event.currentTarget;
+    const resume = form.elements.namedItem("resume");
+    const file = resume instanceof HTMLInputElement ? resume.files?.[0] : undefined;
+    if (file && file.size > MAX_RESUME_BYTES) {
+      setStatus("error");
+      setError("Resume must be 3MB or smaller");
+      return;
+    }
     const body = new FormData(form);
 
     try {
@@ -127,7 +136,7 @@ export function ApplyForm({ role, roleSlug = "" }: { role: string; roleSlug?: st
             className="mt-2 flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-line bg-bg px-4 py-7 text-center transition hover:border-gold/40"
           >
             <span className="text-sm text-ink">{fileName || "Drop a PDF or Word file, or browse"}</span>
-            <span className="mt-1 text-xs text-muted">Required · PDF or Word · up to 8MB</span>
+            <span className="mt-1 text-xs text-muted">Required · PDF or Word · up to 3MB</span>
             <input
               id="resume"
               name="resume"
@@ -135,7 +144,18 @@ export function ApplyForm({ role, roleSlug = "" }: { role: string; roleSlug?: st
               required
               accept=".pdf,.doc,.docx,.rtf,.odt,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               className="sr-only"
-              onChange={(event) => setFileName(event.target.files?.[0]?.name ?? "")}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file && file.size > MAX_RESUME_BYTES) {
+                  event.target.value = "";
+                  setFileName("");
+                  setError("Resume must be 3MB or smaller");
+                  setStatus("error");
+                  return;
+                }
+                setError("");
+                setFileName(file?.name ?? "");
+              }}
             />
           </label>
         </div>

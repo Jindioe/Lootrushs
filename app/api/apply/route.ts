@@ -85,7 +85,7 @@ export async function POST(request: Request) {
       message.startsWith("Could not open Firestore") ||
       message.startsWith("Captcha") ||
       message.startsWith("Complete the captcha") ||
-      message.includes("8MB")
+      message.includes("3MB")
         ? message
         : code === "5" || message.includes("NOT_FOUND")
           ? "Could not open Firestore. Restart npm run dev. If the database is Enterprise edition, create a Standard edition database named (default) and submit again."
