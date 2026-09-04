@@ -1,0 +1,14 @@
+rules_version = '2';
+
+// Resume files at resumes/{fileName}. Served only through /api/admin/resume.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /resumes/{fileName} {
+      allow read, write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

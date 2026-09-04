@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #07070a;
+  --bg-raised: #101014;
+  --bg-card: #16161c;
+  --line: rgba(244, 232, 196, 0.12);
+  --gold: #e8b84a;
+  --gold-soft: #f5d06a;
+  --ember: #ff6b2c;
+  --ink: #f6f1e6;
+  --muted: #9a9386;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--bg-raised);
+  --color-card: var(--bg-card);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-ember: var(--ember);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --font-display: var(--font-syne);
+  --font-sans: var(--font-outfit);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(232, 184, 74, 0.28);
+  color: #fff8e8;
+}
+
+.noise {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.gold-text {
+  color: #e8b84a;
+}
+
+.ember-glow {
+  box-shadow:
+    0 0 0 1px rgba(232, 184, 74, 0.2),
+    0 12px 40px rgba(255, 107, 44, 0.12);
+}
+
+.grid-fade {
+  background-image:
+    linear-gradient(rgba(232, 184, 74, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 184, 74, 0.06) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.8s ease both;
+}
+
+.rise-d1 { animation-delay: 0.08s; }
+.rise-d2 { animation-delay: 0.16s; }
+.rise-d3 { animation-delay: 0.24s; }
+.rise-d4 { animation-delay: 0.32s; }
