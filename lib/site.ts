@@ -3,10 +3,10 @@ export const site = {
   domain: "lootrushs.com",
   url: "https://lootrushs.com",
   email: "hello@lootrushs.com",
-  tagline: "Web3 products, built to ship.",
+  tagline: "Web3 products for clients. Talent to ship them.",
   location: "Remote · Worldwide",
   description:
-    "Lootrushs is a Web3 development company. We design and ship blockchain products — smart contracts, dApps, DeFi, real estate platforms, NFTs, wallets, and cross-chain systems — for teams that need production-ready on-chain software.",
+    "Lootrushs is a Web3 development and talent company. We build blockchain products for client companies, and we hire and manage the developers who do that work.",
 };
 
 export const media = {
@@ -67,7 +67,7 @@ export const services = [
     stack: "Tokenization · fractional ownership",
     photo: "/media/brickfi.jpg",
     blurb:
-      "On-chain property and real-world asset products: share issuance, investor onboarding, distributions, and reporting — the same stack behind BrickFi.",
+      "On-chain property and real-world asset products: share issuance, investor onboarding, distributions, and reporting — the same work we delivered on BrickFi for a client.",
   },
   {
     slug: "nfts-gaming",
@@ -103,7 +103,7 @@ export const projects = [
     chain: "Ethereum · Polygon",
     photo: "/media/brickfi.jpg",
     blurb:
-      "A real estate investment platform for fractional property ownership — on-chain shares, distributions, and an investor dashboard for dealing and reporting.",
+      "A client real estate investment platform for fractional property ownership. Lootrushs developed, completed, and delivered on-chain shares, distributions, and the investor dashboard.",
   },
   {
     slug: "vaultlayer",
@@ -154,37 +154,60 @@ export const projects = [
 
 export const values = [
   {
-    title: "Ship on-chain, not slide decks",
-    body: "We write contracts, tests, and product surfaces that go to mainnet. Discovery is short. Delivery is the point.",
+    title: "Talent plus delivery",
+    body: "We recruit under the Lootrushs name and stay the employer. Developers work through us while they build and support the client’s product.",
+  },
+  {
+    title: "Ship the client’s product",
+    body: "Contracts, tests, and product surfaces that go to mainnet. Discovery is short. Delivery is the point.",
   },
   {
     title: "Security is part of the build",
     body: "Invariants, fuzzing, access control, and upgrade safety sit in the same sprint as features — not a week after launch.",
   },
   {
-    title: "Chain-native, product-literate",
-    body: "We speak Solidity and user flows. A mint, a swap, or a vault has to make sense to the person holding the wallet.",
-  },
-  {
     title: "Multi-chain by default",
-    body: "Ethereum, L2s, Solana, and adjacent ecosystems. We pick the chain for the product, not the other way around.",
+    body: "Ethereum, L2s, Solana, and adjacent ecosystems. We pick the chain for the client’s product, not the other way around.",
   },
 ];
 
 export const processSteps = [
   {
     n: "01",
-    title: "Scope the chain work",
+    title: "Scope the client work",
     body: "We map the protocol, threat model, and product surface — what lives on-chain, what stays off, and what must ship first.",
   },
   {
     n: "02",
-    title: "Build and harden",
-    body: "Contracts, indexers, and dApp UI in parallel. Tests, gas, and admin paths are treated as product, not leftovers.",
+    title: "Staff and build",
+    body: "We hire or assign developers through Lootrushs, then ship contracts, indexers, and dApp UI as one team.",
   },
   {
     n: "03",
-    title: "Launch and operate",
-    body: "Mainnet deploy, monitoring, incident playbooks, and a handoff your team can run — or we stay on as the engineering bench.",
+    title: "Deliver and support",
+    body: "Mainnet deploy, monitoring, and ongoing development. The product stays the client’s. The bench stays ours.",
+  },
+];
+
+export const hiringSteps = [
+  {
+    n: "01",
+    title: "Apply or get introduced",
+    body: "Roles are posted under the Lootrushs name. We source candidates, or a client finds someone and sends them to us for the formal process.",
+  },
+  {
+    n: "02",
+    title: "Lootrushs hiring",
+    body: "We screen, interview, and decide if you are a fit for our bench and for the kind of client work we take.",
+  },
+  {
+    n: "03",
+    title: "Client interview",
+    body: "After you pass our process, you may complete a final interview with the client company before joining that project.",
+  },
+  {
+    n: "04",
+    title: "Join through Lootrushs",
+    body: "If both sides agree, you work through Lootrushs — developing, maintaining, and supporting the client’s blockchain product.",
   },
 ];

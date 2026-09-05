@@ -31,6 +31,9 @@ export type Job = {
 export const equityNote =
   "Token or equity on top of base, sized to the role. Details come in the offer, not in this posting.";
 
+export const hiringNote =
+  "Roles are posted by Lootrushs. We source, screen, and interview — or a client introduces a candidate to us. After you pass our process, you may interview with the client company. If both sides agree, you join through Lootrushs and work on that client’s product.";
+
 export function formatSalary(min: number, max: number) {
   const usd = (n: number) => `$${Math.round(n / 1000)}k`;
   return `${usd(min)} – ${usd(max)} USD (base)`;
@@ -120,8 +123,8 @@ export const jobs: Job[] = [
     "Design",
     "Mid",
     "Figma · dApps · brand",
-    "The core design seat across Lootrushs, BrickFi, and client launches — product UI, wallet flows, and the visual system they share.",
-    "Lootrushs is a remote Web3 studio. We design and ship BrickFi (fractional real-estate ownership, distributions, investor reporting) and client protocols with the dApps that sit on them. This role is not a marketing-only seat and not a brand-only seat. You will spend most weeks in product: invest, mint, swap, admin, and the failure states those flows always have.\n\nYou work daily with a frontend engineer and a PM or the CTO on smaller jobs. First month is BrickFi’s invest and position screens plus the lootrushs.com system so it stays consistent with the product. We overlap a few hours with US Eastern. Apply on this site with a resume and a portfolio link.",
+    "The core design seat across Lootrushs client work — including BrickFi — product UI, wallet flows, and the visual system they share.",
+    "Lootrushs is a remote Web3 development and talent company. We hire designers under our name and place them on client products — including BrickFi, a fractional real-estate platform we developed and delivered for a client — plus other protocols and dApps. This role is not a marketing-only seat and not a brand-only seat. You will spend most weeks in product: invest, mint, swap, admin, and the failure states those flows always have.\n\nYou work daily with a frontend engineer and a PM or the CTO on smaller jobs. First month is BrickFi’s invest and position screens plus the lootrushs.com system so it stays consistent with client product work. We overlap a few hours with US Eastern. Apply on this site with a resume and a portfolio link.",
     [
       "Own end-to-end dApp and marketing surfaces for BrickFi and assigned client work.",
       "Design wallet-connected flows including connect, wrong network, pending, revert, and success.",
@@ -278,9 +281,9 @@ export const jobs: Job[] = [
     "Executive",
     "Org · craft · brand",
     "Own design at Lootrushs — product, brand, and the standard we sell to clients — from IC through lead.",
-    "This is the top of the design ladder. You sit with the CTO and Head of Product. You still have taste; you also have an org: hiring, levels, rituals, and when we say no to a client’s “just make it look like [competitor].”\n\nBrickFi and the studio brand are yours to protect. You will hire a Design Lead if you do not want to run day-to-day staffing yourself. You will still review the riskiest surfaces before they ship.",
+    "This is the top of the design ladder. You sit with the CTO and Head of Product. You still have taste; you also have an org: hiring, levels, rituals, and when we say no to a client’s “just make it look like [competitor].”\n\nClient product quality — including BrickFi — and the Lootrushs brand are yours to protect. You will hire a Design Lead if you do not want to run day-to-day staffing yourself. You will still review the riskiest surfaces before they ship.",
     [
-      "Set design strategy for the studio and BrickFi.",
+      "Set design strategy for Lootrushs and client products including BrickFi.",
       "Build the design org: hiring, levels, critiques, and pairing with engineering.",
       "Guard brand and product quality at executive level, including client escalations.",
       "Represent design in client and leadership conversations.",
@@ -292,7 +295,7 @@ export const jobs: Job[] = [
       "Led a design org, or were the founding designer who scaled one past yourself.",
       "Shipped Web3 or other complex, high-trust product orgs.",
       "You have hired and leveled designers, not only directed vendors.",
-      "Comfortable in a studio that does both a owned product (BrickFi) and client work.",
+      "Comfortable placing designers on client products such as BrickFi and other protocol work.",
     ],
     ["Public craft", "Multi-brand systems", "Executive communication with non-designers"],
   ),
@@ -450,7 +453,7 @@ export const jobs: Job[] = [
     "Mid",
     "Tokenization · BrickFi · Solidity",
     "Build on-chain real estate and RWA products — fractional shares, distributions, eligibility, and investor reporting on BrickFi.",
-    "BrickFi is our real estate investment platform. You extend tokenization, issuance, and the investor dashboard. Legal and eligibility rules are part of the job. We will not ask you to invent securities advice; you will implement the gates counsel specifies.\n\nThis can be your primary product (not leftover hours from a DEX). You work with the BrickFi PM and designer. Transfers, lockups, and reporting have to match what we told the investor — tests and an audit trail are not optional.",
+    "BrickFi is a client real estate investment platform Lootrushs develops and delivers. You extend tokenization, issuance, and the investor dashboard. Legal and eligibility rules are part of the job. We will not ask you to invent securities advice; you will implement the gates counsel specifies.\n\nThis can be your primary assignment (not leftover hours from a DEX). You work with the BrickFi PM and designer through Lootrushs. Transfers, lockups, and reporting have to match what the client told the investor — tests and an audit trail are not optional.",
     [
       "Implement share issuance, transfers, lockups, and distributions.",
       "Connect on-chain state to investor and admin UIs.",
@@ -674,7 +677,7 @@ export const jobs: Job[] = [
       "Hire and develop managers and staff ICs.",
       "Standardize reviews, incident process, and launch gates.",
       "Be accountable for client technical outcomes and escalations.",
-      "Balance BrickFi investment against client capacity in writing, not in Slack lore.",
+      "Balance BrickFi delivery against other client capacity in writing, not in Slack lore.",
       "Partner with Head of Security on audit calendars.",
       "Represent engineering in sales-to-delivery handoffs when the work is large.",
     ],
@@ -707,7 +710,7 @@ export const jobs: Job[] = [
       "You have owned a multi-team delivery number and a quality bar at the same time.",
       "You can still review a serious technical design.",
     ],
-    ["Founding VP", "Multi-product studio", "Services plus product P&L awareness"],
+    ["Founding VP", "Multi-client delivery", "Services plus staffing P&L awareness"],
   ),
   role(
     "smart-contract-security-engineer",
@@ -859,10 +862,10 @@ export const jobs: Job[] = [
     "Product",
     "Executive",
     "Portfolio · BrickFi · clients",
-    "Own the product org and the studio’s product bets — from APM to senior PM — beside the CTO.",
-    "You decide what we build, in what order, and what we refuse. Design and engineering are your peers. You set product strategy for Lootrushs and BrickFi. You hire and level the PM team. You align clients with a portfolio the bench can ship.\n\nYou sit on leadership with the CTO, Head of Design, and VP of Engineering. You will still write a spec when the team is thin.",
+    "Own the product org and client product bets — from APM to senior PM — beside the CTO.",
+    "You decide what we build, in what order, and what we refuse. Design and engineering are your peers. You set product strategy across Lootrushs client work, including BrickFi. You hire and level the PM team. You align clients with a portfolio the bench can ship.\n\nYou sit on leadership with the CTO, Head of Design, and VP of Engineering. You will still write a spec when the team is thin.",
     [
-      "Set product strategy for Lootrushs and BrickFi.",
+      "Set product strategy across Lootrushs client work, including BrickFi.",
       "Hire and level the PM team.",
       "Align clients with a portfolio the bench can actually staff.",
       "Sit on leadership with CTO, Head of Design, and VP Eng.",
@@ -875,7 +878,7 @@ export const jobs: Job[] = [
       "Crypto or similarly technical product background.",
       "You have hired PMs and killed a roadmap item in the same quarter.",
     ],
-    ["RWA", "Multi-sided markets", "Studio plus owned product"],
+    ["RWA", "Multi-sided markets", "Client delivery plus staffing"],
   ),
   role(
     "web3-community-manager",
@@ -1125,7 +1128,7 @@ export const jobs: Job[] = [
     "Executive",
     "Vision · protocol · org",
     "The top of the ladder: technical vision, the engineering/design/product bar, and every mainnet we put our name on.",
-    "Lootrushs is a Web3 development company. BrickFi is our product; the rest is client protocol and dApp work. The CTO owns how we build — from a designer pairing on a flow to protocol architecture — and hires the leaders under this role (VP of Engineering, Head of Design, Head of Product, Head of Security).\n\nYou will still read diffs. You will be on the call where a client asks for an unaudited upgrade next Friday. You will refuse work we cannot staff or cannot secure. Remote, US Eastern overlap. Base $280k–$360k plus token or equity. This is not a conference-only seat.",
+    "Lootrushs is a Web3 development and talent company. We build blockchain products for client companies and hire the people who do that work. BrickFi is a client product we developed and delivered; the rest of the bench is the same model. The CTO owns how we build — from a designer pairing on a flow to protocol architecture — and hires the leaders under this role (VP of Engineering, Head of Design, Head of Product, Head of Security).\n\nYou will still read diffs. You will be on the call where a client asks for an unaudited upgrade next Friday. You will refuse work we cannot staff or cannot secure. Remote, US Eastern overlap. Base $280k–$360k plus token or equity. This is not a conference-only seat.",
     [
       "Set technical strategy across EVM, Solana, BrickFi, and client work.",
       "Hire and develop the leadership bench from design through engineering.",
@@ -1142,7 +1145,7 @@ export const jobs: Job[] = [
       "Evidence you have built teams, not only systems.",
       "Willing to be in the details on BrickFi and on client mainnets.",
     ],
-    ["RWA / real estate tech", "Studio or multi-product org", "Public technical presence", "Services plus product"],
+    ["RWA / real estate tech", "Studio or multi-client org", "Public technical presence", "Services plus talent"],
   ),
 ];
 

@@ -4,7 +4,7 @@ import { site, media } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: `Start a Web3 project with ${site.name}.`,
+  description: `Start a Web3 build or staff a development team with ${site.name}.`,
 };
 
 const fieldClass =
@@ -15,8 +15,8 @@ export default function ContactPage() {
     <>
       <BrandHero eyebrow="Contact" title="Start a build." image={media.contact} imageAlt="A project conversation">
         <p className="mt-5 max-w-md text-muted">
-          New protocol, dApp, audit-ready rewrite, or a chain migration — send the brief. We reply
-          with scope, timeline, and whether we are the right bench.
+          Need a protocol built, a dApp shipped, or a Web3 team staffed through Lootrushs — send the
+          brief. We reply with scope, timeline, and whether we are the right bench.
         </p>
       </BrandHero>
 
@@ -63,6 +63,8 @@ export default function ContactPage() {
             <option>NFT / gaming</option>
             <option>Wallet / identity</option>
             <option>Infrastructure</option>
+            <option>Development team / staffing</option>
+            <option>Introduce a candidate</option>
             <option>Something else</option>
           </select>
 

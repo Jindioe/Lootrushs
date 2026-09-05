@@ -4,11 +4,11 @@ import Link from "next/link";
 import { BrandHero } from "@/components/BrandHero";
 import { JobBoard } from "@/components/JobBoard";
 import { jobs, departments } from "@/lib/jobs";
-import { media, site } from "@/lib/site";
+import { hiringSteps, media, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: `Open Web3 jobs at ${site.name}. Design, engineering, product, and leadership roles — apply on ${site.domain}.`,
+  description: `Open Web3 jobs at ${site.name}. We hire under our name and match developers to client projects — apply on ${site.domain}.`,
 };
 
 export default function CareersPage() {
@@ -29,8 +29,9 @@ export default function CareersPage() {
 
       <BrandHero plain eyebrow="Careers" title="We're hiring.">
         <p className="mt-5 max-w-2xl text-muted">
-          {jobs.length} open roles. Mid, senior, staff, lead, and executive. Base pay is listed on
-          every posting, plus token or equity. Apply with a resume. Applications stay private.
+          {jobs.length} roles posted under the Lootrushs name. We source, screen, and interview,
+          then match you to client work. After our process you may interview with the client. Base
+          pay is listed on every posting.
         </p>
         <dl className="mt-10 grid max-w-2xl grid-cols-3 gap-6 border-t border-line pt-8">
           <div>
@@ -49,6 +50,20 @@ export default function CareersPage() {
       </BrandHero>
 
       <div className="relative mx-auto max-w-6xl px-5 py-16">
+        <div className="mb-14">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">How hiring works</p>
+          <h2 className="mt-3 font-display text-3xl md:text-4xl">Apply to Lootrushs. Join a client project.</h2>
+          <div className="mt-10 grid gap-8 md:grid-cols-4">
+            {hiringSteps.map((step) => (
+              <div key={step.n} className="border-t border-gold/30 pt-6">
+                <p className="font-display text-sm text-gold">{step.n}</p>
+                <h3 className="mt-3 font-display text-xl">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <JobBoard />
 
         <div className="mt-12 rounded-3xl border border-line bg-raised/90 p-8 backdrop-blur-sm md:flex md:items-center md:justify-between md:gap-10 md:p-10">

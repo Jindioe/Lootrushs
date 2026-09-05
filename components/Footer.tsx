@@ -13,7 +13,7 @@ export function Footer() {
     <footer className="border-t border-line bg-raised">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-5 py-12 md:flex-row md:items-center">
         <div>
-          <p className="font-display text-2xl">Ready to ship on-chain?</p>
+          <p className="font-display text-2xl">Need a product built or a team staffed?</p>
           <p className="mt-2 text-sm text-muted">{site.location} · {site.email}</p>
         </div>
         <Link

@@ -15,13 +15,14 @@ export default function OpenApplyPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Careers</p>
         <h1 className="mt-3 font-display text-4xl md:text-6xl">Open application</h1>
         <p className="mt-5 max-w-md text-muted">
-          Tell us what you want to build. Upload a resume. Your application is stored privately.
+          Tell us what you want to build. You apply to Lootrushs; we match qualified people to
+          client projects. Your application is stored privately.
         </p>
-        <Photo src={media.careers} alt="Lootrushs studio" className="mt-10 aspect-[16/11] rounded-3xl" />
+        <Photo src={media.careers} alt="Lootrushs hiring" className="mt-10 aspect-[16/11] rounded-3xl" />
         <ul className="mt-8 space-y-3 text-sm leading-6 text-muted">
-          <li>Resume stays in our private hiring database</li>
-          <li>We reply by email if there is a fit</li>
-          <li>No public listing of your application</li>
+          <li>You apply to Lootrushs, or a client can introduce you to us</li>
+          <li>After our hiring process you may interview with the client</li>
+          <li>If hired, you work through Lootrushs on that client’s product</li>
         </ul>
       </div>
       <ApplyForm role="Open application" roleSlug="open-application" />

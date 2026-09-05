@@ -3,7 +3,7 @@ import { site } from "@/lib/site";
 
 export function CtaBand({
   title = site.tagline,
-  body = `Tell us the chain, the product, and the deadline. We will tell you what it takes to ship it.`,
+  body = `Tell us the chain, the product, and whether you need a build, a team, or both. We will tell you what it takes to ship it.`,
   href = "/contact",
   action = "Start a project",
 }: {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplyForm } from "@/components/ApplyForm";
 import { BrandHero } from "@/components/BrandHero";
-import { equityNote, formatSalary, getJob, jobs } from "@/lib/jobs";
+import { equityNote, formatSalary, getJob, hiringNote, jobs } from "@/lib/jobs";
 import { media, site } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -57,6 +57,10 @@ export default async function JobPage({ params }: Props) {
         </div>
         <p className="mt-8 text-lg leading-8 text-muted">{job.summary}</p>
         <p className="mt-5 whitespace-pre-line text-base leading-8 text-muted">{job.about}</p>
+        <div className="mt-8 rounded-2xl border border-line bg-raised p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">How hiring works</p>
+          <p className="mt-3 text-sm leading-6 text-muted">{hiringNote}</p>
+        </div>
 
         <section className="mt-12">
           <h2 className="font-display text-2xl">What you will do</h2>

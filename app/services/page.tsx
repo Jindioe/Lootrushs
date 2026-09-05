@@ -6,7 +6,7 @@ import { media, services, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Services",
-  description: `Web3 and blockchain development services from ${site.name}.`,
+  description: `Web3 product development and specialized teams from ${site.name}.`,
 };
 
 export default function ServicesPage() {
@@ -14,13 +14,13 @@ export default function ServicesPage() {
     <>
       <BrandHero
         eyebrow="Services"
-        title="Engineering for every layer of a Web3 product."
+        title="The product, and the team that builds it."
         image={media.hero}
         imageAlt="Engineers collaborating"
       >
         <p className="mt-5 max-w-xl text-muted">
-          From first contract to production dApp, {site.name} covers the stack founders usually
-          stitch together across three vendors.
+          From first contract to production dApp, {site.name} builds client blockchain products and
+          staffs the developers who ship and support them.
         </p>
       </BrandHero>
 
@@ -41,7 +41,7 @@ export default function ServicesPage() {
 
       <CtaBand
         title="Need a mix of all of this?"
-        body="Most of our work is a protocol plus a product surface. We staff contracts, indexers, and frontend as one team."
+        body="Most client work is a protocol plus a product surface. We hire through Lootrushs and staff contracts, indexers, and frontend as one team."
         action="Talk about a build"
       />
     </>

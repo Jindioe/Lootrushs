@@ -23,13 +23,13 @@ export default function OpenGraphImage() {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1.05 }}>
-            Blockchain software.
+            Client products.
           </div>
           <div style={{ fontSize: 72, fontWeight: 700, color: "#e8b84a", lineHeight: 1.05 }}>
-            Built for mainnet.
+            Built and staffed.
           </div>
           <div style={{ marginTop: 28, fontSize: 28, color: "#9a9386" }}>
-            Contracts · dApps · BrickFi · DeFi · wallets
+            Development · talent · client delivery
           </div>
         </div>
       </div>

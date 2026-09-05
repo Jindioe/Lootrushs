@@ -74,7 +74,7 @@ export function ApplyForm({ role, roleSlug = "" }: { role: string; roleSlug?: st
         <h2 className="mt-2 font-display text-2xl">Application submitted</h2>
         <p className="mt-3 text-sm leading-6 text-muted">
           We saved your details, resume, and the role you applied for. If there is a fit, we will
-          follow up by email.
+          follow up by email — including a client match or next interview when that is the path.
         </p>
         <button
           type="button"
@@ -176,7 +176,8 @@ export function ApplyForm({ role, roleSlug = "" }: { role: string; roleSlug?: st
           {status === "saving" ? "Submitting…" : "Submit application"}
         </button>
         <p className="text-center text-[11px] leading-5 text-muted">
-          Your application is stored privately. We use it only for recruiting.
+          Your application is stored privately. We use it to hire through Lootrushs and match you to
+          client work.
         </p>
       </div>
     </form>

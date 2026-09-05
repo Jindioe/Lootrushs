@@ -7,7 +7,7 @@ import { media, projects, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Work",
-  description: `Selected Web3 and blockchain projects from ${site.name}.`,
+  description: `Selected client Web3 products developed and delivered by ${site.name}.`,
 };
 
 export default function WorkPage() {
@@ -15,10 +15,10 @@ export default function WorkPage() {
 
   return (
     <>
-      <BrandHero eyebrow="Work" title="Selected projects" image={media.hero} imageAlt="Lootrushs team at work">
+      <BrandHero eyebrow="Work" title="Client products we delivered" image={media.hero} imageAlt="Lootrushs team at work">
         <p className="mt-5 max-w-xl text-muted">
-          Web3 and blockchain products {site.name} builds — real estate, DeFi, governance, gaming,
-          bridges, and wallets — from first contract through launch.
+          Blockchain products {site.name} developed for client companies — real estate, DeFi,
+          governance, gaming, bridges, and wallets — from first contract through launch.
         </p>
       </BrandHero>
 

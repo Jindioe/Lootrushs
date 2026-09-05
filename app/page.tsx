@@ -21,16 +21,15 @@ export default function HomePage() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 md:grid-cols-2 md:py-28">
           <div>
           <p className="rise text-xs font-semibold uppercase tracking-[0.28em] text-gold">
-            Web3 development studio · {site.location}
+            Web3 development and talent · {site.location}
           </p>
           <h1 className="rise rise-d1 mt-5 max-w-4xl font-display text-5xl font-semibold leading-[1.05] tracking-tight md:text-7xl">
-            Blockchain software.
-            <span className="gold-text"> Built for mainnet.</span>
+            Client products.
+            <span className="gold-text"> Built and staffed.</span>
           </h1>
           <p className="rise rise-d2 mt-6 max-w-xl text-lg leading-8 text-muted">
-            {site.name} designs, engineers, and launches smart contracts, dApps, real estate
-            platforms, DeFi, NFT products, wallets, and cross-chain systems — for teams that need
-            more than a prototype.
+            {site.name} builds blockchain products for Web3 companies and hires the developers who
+            do that work. You work through Lootrushs. The product belongs to the client.
           </p>
           <div className="rise rise-d3 mt-10 flex flex-wrap items-center gap-4">
             <Link
@@ -48,9 +47,9 @@ export default function HomePage() {
           </div>
           <dl className="rise rise-d4 mt-16 grid max-w-2xl grid-cols-3 gap-6 border-t border-line pt-8">
             {[
-              ["6+", "capability areas"],
+              ["Build", "client products"],
+              ["Hire", "Web3 talent"],
               ["8", "chains we ship on"],
-              ["E2E", "contract to UI"],
             ].map(([stat, label]) => (
               <div key={label}>
                 <dt className="font-display text-3xl text-gold">{stat}</dt>
@@ -84,7 +83,7 @@ export default function HomePage() {
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Services</p>
               <h2 className="mt-3 max-w-lg font-display text-3xl md:text-4xl">
-                Full-stack Web3, from protocol to product.
+                Blockchain software, plus the team to ship it.
               </h2>
             </div>
             <Link href="/services" className="hidden text-sm text-gold hover:text-gold-soft md:inline">
@@ -111,7 +110,7 @@ export default function HomePage() {
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Selected work</p>
-              <h2 className="mt-3 font-display text-3xl md:text-4xl">Projects across the stack.</h2>
+              <h2 className="mt-3 font-display text-3xl md:text-4xl">Client products we delivered.</h2>
             </div>
             <Link href="/work" className="hidden text-sm text-gold hover:text-gold-soft md:inline">
               View all work →
@@ -153,7 +152,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-5 py-20">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">How we work</p>
           <h2 className="mt-3 max-w-lg font-display text-3xl md:text-4xl">
-            A path from idea to deployed protocol.
+            A path from brief to a staffed, shipped product.
           </h2>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {processSteps.map((step) => (
@@ -171,8 +170,8 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 md:grid-cols-2">
           <WorkVisual slug="vaultlayer" className="aspect-[4/3] rounded-3xl border border-line" />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Studio</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Why teams hire Lootrushs.</h2>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Company</p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl">Why clients work with Lootrushs.</h2>
             <div className="mt-8 space-y-5">
               {values.slice(0, 3).map((value) => (
                 <div key={value.title}>
@@ -193,7 +192,7 @@ export default function HomePage() {
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Careers</p>
-              <h2 className="mt-3 font-display text-3xl md:text-4xl">{jobs.length} Web3 roles, open now.</h2>
+              <h2 className="mt-3 font-display text-3xl md:text-4xl">{jobs.length} roles, posted by Lootrushs.</h2>
             </div>
             <Link href="/careers" className="hidden text-sm text-gold hover:text-gold-soft md:inline">
               View all jobs →
