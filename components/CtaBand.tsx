@@ -14,7 +14,7 @@ export function CtaBand({
 }) {
   return (
     <section className="border-t border-line">
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
+      <div className="mx-auto max-w-7xl px-5 py-20 text-center">
         <p className="font-display text-4xl md:text-5xl">{title}</p>
         <p className="mx-auto mt-4 max-w-md text-muted">{body}</p>
         <Link

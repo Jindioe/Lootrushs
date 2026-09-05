@@ -1,93 +1,60 @@
 import type { Metadata } from "next";
 import { BrandHero } from "@/components/BrandHero";
-import { site, media } from "@/lib/site";
+import { ContactForm } from "@/components/ContactForm";
+import { FaqList } from "@/components/FaqList";
+import { SectionHeading } from "@/components/SectionHeading";
+import { clientProcess, media, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: `Start a Web3 build or staff a development team with ${site.name}.`,
 };
 
-const fieldClass =
-  "mt-2 w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-ink outline-none focus:border-gold";
-
 export default function ContactPage() {
   return (
     <>
-      <BrandHero eyebrow="Contact" title="Start a build." image={media.contact} imageAlt="A project conversation">
-        <p className="mt-5 max-w-md text-muted">
-          Need a protocol built, a dApp shipped, or a Web3 team staffed through Lootrushs — send the
-          brief. We reply with scope, timeline, and whether we are the right bench.
+      <BrandHero eyebrow="Contact" title="Tell us what you are building." image={media.contact} imageAlt="A project conversation">
+        <p className="mt-5 max-w-xl text-muted">
+          New protocol, dApp, RWA platform, or a team you need staffed through Lootrushs. We reply
+          within two business days with scope, whether we can staff it, and a first step.
         </p>
       </BrandHero>
 
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-20 lg:grid-cols-[0.85fr_1.15fr]">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Direct</p>
-          <a href={`mailto:${site.email}`} className="mt-3 block font-display text-2xl text-gold">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">Direct</p>
+          <a href={`mailto:${site.email}`} className="mt-3 block font-display text-2xl text-gold md:text-3xl">
             {site.email}
           </a>
           <p className="mt-6 text-sm leading-6 text-muted">{site.location}</p>
           <p className="mt-2 text-sm leading-6 text-muted">{site.domain}</p>
-          <ul className="mt-10 space-y-3 text-sm leading-6 text-muted">
+          <ul className="mt-10 space-y-4 text-sm leading-6 text-muted">
             <li>Typical reply within two business days</li>
             <li>NDA available before a detailed brief</li>
+            <li>An engineer reads what you send before we get on a call</li>
             <li>We say no if we are not the right team</li>
           </ul>
+          <div className="mt-10 space-y-5 border-t border-line pt-8">
+            {clientProcess.slice(0, 4).map((step) => (
+              <div key={step.n}>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-gold">{step.n}</p>
+                <p className="mt-1 font-display text-xl">{step.title}</p>
+                <p className="mt-1 text-sm leading-6 text-muted">{step.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
-
-        <form
-          className="rounded-2xl border border-line bg-card p-6 md:p-8"
-          action={`mailto:${site.email}`}
-          method="post"
-          encType="text/plain"
-        >
-          <p className="font-display text-2xl">Project brief</p>
-          <label className="mt-6 block text-sm text-muted" htmlFor="name">
-            Name
-          </label>
-          <input id="name" name="name" required className={fieldClass} />
-
-          <label className="mt-5 block text-sm text-muted" htmlFor="email">
-            Email
-          </label>
-          <input id="email" name="email" type="email" required className={fieldClass} />
-
-          <label className="mt-5 block text-sm text-muted" htmlFor="topic">
-            What do you need?
-          </label>
-          <select id="topic" name="topic" className={fieldClass}>
-            <option>Smart contracts</option>
-            <option>dApp / product UI</option>
-            <option>DeFi protocol</option>
-            <option>Real estate / RWA</option>
-            <option>NFT / gaming</option>
-            <option>Wallet / identity</option>
-            <option>Infrastructure</option>
-            <option>Development team / staffing</option>
-            <option>Introduce a candidate</option>
-            <option>Something else</option>
-          </select>
-
-          <label className="mt-5 block text-sm text-muted" htmlFor="message">
-            Tell us about the work
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            required
-            rows={6}
-            placeholder="Chain, product, timeline, and what already exists."
-            className={`${fieldClass} resize-y`}
-          />
-
-          <button
-            type="submit"
-            className="mt-6 w-full rounded-full bg-gold py-3 text-sm font-semibold text-[#1a1406] transition hover:bg-gold-soft"
-          >
-            Send brief
-          </button>
-        </form>
+        <ContactForm />
       </div>
+
+      <section className="border-t border-line bg-raised">
+        <div className="mx-auto max-w-7xl px-5 py-20">
+          <SectionHeading eyebrow="FAQ" title="Before you write." />
+          <div className="mt-10">
+            <FaqList />
+          </div>
+        </div>
+      </section>
     </>
   );
 }

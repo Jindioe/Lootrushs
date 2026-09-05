@@ -13,7 +13,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-bg/80 shadow-[inset_0_1px_0_0_rgba(232,184,74,0.28)] backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
         <Link href="/" className="flex items-center gap-2.5 text-gold" onClick={() => setOpen(false)}>
           <Logo className="h-7 w-7" />
           <span className="font-display text-lg font-semibold tracking-tight text-ink">
@@ -28,7 +28,7 @@ export function Header() {
             </Link>
           </nav>
         ) : (
-          <nav className="hidden items-center gap-6 lg:gap-8 md:flex">
+          <nav className="hidden items-center gap-5 lg:gap-7 lg:flex">
           {nav.map((item) => {
             const active =
               item.href === "/"
@@ -58,7 +58,7 @@ export function Header() {
         {isAdmin ? null : (
           <button
           type="button"
-          className="rounded-md border border-line px-3 py-1.5 text-sm text-ink md:hidden"
+          className="rounded-md border border-line px-3 py-1.5 text-sm text-ink lg:hidden"
           aria-expanded={open}
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
@@ -69,7 +69,7 @@ export function Header() {
       </div>
 
       {open && !isAdmin ? (
-        <nav className="border-t border-line bg-raised px-5 py-4 md:hidden">
+        <nav className="border-t border-line bg-raised px-5 py-4 lg:hidden">
           <div className="flex flex-col gap-3">
             {nav.map((item) => (
               <Link

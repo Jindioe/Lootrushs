@@ -38,7 +38,7 @@ export function BrandHero({
       </div>
       )}
       <div
-        className={`relative mx-auto flex max-w-6xl flex-col justify-end px-5 pb-16 pt-24 md:pb-20 ${
+        className={`relative mx-auto flex max-w-7xl flex-col justify-end px-5 pb-16 pt-24 md:pb-20 ${
           tall ? "min-h-[480px] md:min-h-[560px]" : "min-h-[340px] md:min-h-[400px]"
         }`}
       >
