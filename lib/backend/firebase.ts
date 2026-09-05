@@ -1,16 +1,7 @@
 import "server-only";
-import { Firestore } from "@google-cloud/firestore";
-import { JWT } from "google-auth-library";
+import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
+import { getFirestore, initializeFirestore, type Firestore } from "firebase-admin/firestore";
 import { serverConfig } from "@/lib/server-config";
-
-type FirebaseJson = {
-  projectId?: string;
-  project_id?: string;
-  clientEmail?: string;
-  client_email?: string;
-  privateKey?: string;
-  private_key?: string;
-};
 
 type Credentials = {
   projectId: string;
@@ -18,72 +9,73 @@ type Credentials = {
   privateKey: string;
 };
 
-function firebaseJson() {
-  return serverConfig.firebase as FirebaseJson;
+function normalizePrivateKey(value: string) {
+  let key = value.trim();
+  if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
+    key = key.slice(1, -1);
+  }
+  key = key.replace(/\\n/g, "\n").replace(/\r\n/g, "\n").trim();
+  if (!key.includes("BEGIN PRIVATE KEY") || !key.includes("END PRIVATE KEY")) {
+    throw new Error("Firebase private key is missing or malformed");
+  }
+  return key;
 }
 
 function loadServiceAccount(): Credentials {
-  const fb = firebaseJson();
-  const projectId = (fb.projectId || fb.project_id || "").trim();
-  const clientEmail = (fb.clientEmail || fb.client_email || "").trim();
-  const privateKey = (fb.privateKey || fb.private_key || "").replace(/\\n/g, "\n").replace(/\r\n/g, "\n").trim();
+  const fb = serverConfig.firebase;
+  const projectId = (fb.project_id || "").trim();
+  const clientEmail = (fb.client_email || "").trim();
+  const privateKey = fb.private_key ? normalizePrivateKey(fb.private_key) : "";
 
   if (!projectId || !clientEmail || !privateKey) {
-    throw new Error("Fill in firebase settings in lib/server-config.ts");
+    throw new Error(
+      "Could not open Firestore. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in Vercel environment variables.",
+    );
   }
 
   return { projectId, clientEmail, privateKey };
 }
 
+function databaseIds() {
+  const configured = serverConfig.firestoreDatabaseId?.trim();
+  const aliases =
+    !configured || configured === "default" || configured === "(default)"
+      ? ["(default)", "default"]
+      : [configured, "(default)", "default"];
+  return [...new Set(aliases)];
+}
+
 const globalForFirebase = globalThis as typeof globalThis & {
+  lootrushsAdminApp?: App;
   lootrushsFirestore?: Firestore;
   lootrushsFirestorePromise?: Promise<Firestore>;
 };
 
-function createClient(databaseId: string) {
+function adminApp() {
+  if (globalForFirebase.lootrushsAdminApp) return globalForFirebase.lootrushsAdminApp;
+  if (getApps().length) {
+    globalForFirebase.lootrushsAdminApp = getApps()[0];
+    return globalForFirebase.lootrushsAdminApp;
+  }
+
   const credentials = loadServiceAccount();
-  return new Firestore({
+  globalForFirebase.lootrushsAdminApp = initializeApp({
+    credential: cert({
+      projectId: credentials.projectId,
+      clientEmail: credentials.clientEmail,
+      privateKey: credentials.privateKey,
+    }),
     projectId: credentials.projectId,
-    databaseId,
-    ignoreUndefinedProperties: true,
-    preferRest: true,
-    credentials: {
-      client_email: credentials.clientEmail,
-      private_key: credentials.privateKey,
-    },
   });
+  return globalForFirebase.lootrushsAdminApp;
 }
 
-function databaseCandidates(listed: string[]) {
-  const configured = serverConfig.firestoreDatabaseId?.trim();
-  const aliases =
-    configured === "default" || configured === "(default)" ? ["(default)", "default"] : [configured, "(default)", "default"];
-  return [...new Set([...listed, ...aliases].filter((id): id is string => Boolean(id)))];
-}
-
-async function listDatabaseIds(credentials: Credentials) {
+function createClient(databaseId: string) {
+  const app = adminApp();
   try {
-    const auth = new JWT({
-      email: credentials.clientEmail,
-      key: credentials.privateKey,
-      scopes: ["https://www.googleapis.com/auth/datastore", "https://www.googleapis.com/auth/cloud-platform"],
-    });
-    const { token } = await auth.getAccessToken();
-    if (!token) return [];
-    const response = await fetch(`https://firestore.googleapis.com/v1/projects/${credentials.projectId}/databases`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) {
-      console.error("Firestore list databases failed:", response.status, await response.text());
-      return [];
-    }
-    const body = (await response.json()) as { databases?: Array<{ name?: string }> };
-    return (body.databases ?? [])
-      .map((database) => database.name?.split("/databases/")[1] ?? "")
-      .filter(Boolean);
-  } catch (error) {
-    console.error("Firestore list databases failed:", error);
-    return [];
+    return initializeFirestore(app, { preferRest: true }, databaseId);
+  } catch {
+    return getFirestore(app, databaseId);
   }
 }
 
@@ -96,23 +88,10 @@ async function probe(databaseId: string) {
 async function connectFirestore() {
   if (globalForFirebase.lootrushsFirestore) return globalForFirebase.lootrushsFirestore;
 
-  const credentials = loadServiceAccount();
-  let listed: string[] = [];
+  loadServiceAccount();
+
   let lastError: unknown;
-
-  for (const id of databaseCandidates([])) {
-    try {
-      globalForFirebase.lootrushsFirestore = await probe(id);
-      console.info(`Firestore connected using database "${id}"`);
-      return globalForFirebase.lootrushsFirestore;
-    } catch (error) {
-      lastError = error;
-      console.error(`Firestore probe failed for "${id}":`, error instanceof Error ? error.message : error);
-    }
-  }
-
-  listed = await listDatabaseIds(credentials);
-  for (const id of listed.filter((item) => !databaseCandidates([]).includes(item))) {
+  for (const id of databaseIds()) {
     try {
       globalForFirebase.lootrushsFirestore = await probe(id);
       console.info(`Firestore connected using database "${id}"`);
@@ -124,10 +103,7 @@ async function connectFirestore() {
   }
 
   const detail = lastError instanceof Error ? lastError.message : "NOT_FOUND";
-  const listedText = listed.length ? `Found database id(s): ${listed.join(", ")}.` : "Could not list any Firestore databases.";
-  throw new Error(
-    `Could not open Firestore (${detail}). ${listedText} The console database named "default" is not the same as "(default)".`,
-  );
+  throw new Error(`Could not open Firestore (${detail})`);
 }
 
 export async function firestore() {

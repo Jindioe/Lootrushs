@@ -83,14 +83,17 @@ export async function POST(request: Request) {
     const safe =
       message.startsWith("Resume") ||
       message.startsWith("Upload") ||
-      message.startsWith("Could not open Firestore") ||
       message.startsWith("Captcha") ||
       message.startsWith("Complete the captcha") ||
       message.includes("3MB")
         ? message
-        : code === "5" || message.includes("NOT_FOUND") || /UNAVAILABLE|DEADLINE|PERMISSION_DENIED|unauthenticated/i.test(message)
-          ? "Could not open Firestore. Confirm the Firebase database exists and the service account can reach it, then submit again."
-          : "Could not save this application.";
+        : /UNAUTHENTICATED|invalid_grant|Invalid JWT|invalid authentication|private key/i.test(message)
+          ? "Could not open Firestore. The Firebase service account key is invalid or revoked."
+          : message.startsWith("Could not open Firestore") && message.length < 200
+            ? message
+            : code === "5" || /NOT_FOUND|UNAVAILABLE|DEADLINE|PERMISSION_DENIED/i.test(message)
+              ? "Could not open Firestore. Confirm the Firebase database exists and try again."
+              : "Could not save this application.";
     return NextResponse.json({ error: safe }, { status: 500 });
   }
 }
