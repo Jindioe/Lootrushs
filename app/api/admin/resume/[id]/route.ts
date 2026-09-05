@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getApplication, readResume } from "@/lib/backend";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 function safeFileName(name: string | null) {
   return (name || "resume").replace(/[/\\]/g, "_");

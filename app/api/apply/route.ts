@@ -3,6 +3,7 @@ import { submitApplication } from "@/lib/backend";
 import { verifyCaptcha } from "@/lib/captcha";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 function text(form: FormData, key: string) {
   const value = form.get(key);
@@ -87,8 +88,8 @@ export async function POST(request: Request) {
       message.startsWith("Complete the captcha") ||
       message.includes("3MB")
         ? message
-        : code === "5" || message.includes("NOT_FOUND")
-          ? "Could not open Firestore. Restart npm run dev. If the database is Enterprise edition, create a Standard edition database named (default) and submit again."
+        : code === "5" || message.includes("NOT_FOUND") || /UNAVAILABLE|DEADLINE|PERMISSION_DENIED|unauthenticated/i.test(message)
+          ? "Could not open Firestore. Confirm the Firebase database exists and the service account can reach it, then submit again."
           : "Could not save this application.";
     return NextResponse.json({ error: safe }, { status: 500 });
   }

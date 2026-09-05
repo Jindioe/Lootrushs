@@ -10,7 +10,7 @@ export const serverConfig = {
     password: "@Abc2340125",
     sessionSecret: "93f95f670c87b1e3588ab4f128f58279f198142df6fd01c2cb6938fb5ee34363",
   },
-  firestoreDatabaseId: "default",
+  firestoreDatabaseId: "(default)",
   firebase: {
     "type": "service_account",
     "project_id": "lootrushs",

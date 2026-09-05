@@ -74,7 +74,7 @@ export async function saveResume(file: File) {
     writes.push(
       fileRef.collection("chunks").doc(String(index)).set({
         index,
-        data: buffer.subarray(start, start + CHUNK_BYTES),
+        data: Buffer.from(buffer.subarray(start, start + CHUNK_BYTES)),
       }),
     );
   }

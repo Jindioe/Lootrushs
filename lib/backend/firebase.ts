@@ -26,7 +26,7 @@ function loadServiceAccount(): Credentials {
   const fb = firebaseJson();
   const projectId = (fb.projectId || fb.project_id || "").trim();
   const clientEmail = (fb.clientEmail || fb.client_email || "").trim();
-  const privateKey = (fb.privateKey || fb.private_key || "").replace(/\\n/g, "\n").trim();
+  const privateKey = (fb.privateKey || fb.private_key || "").replace(/\\n/g, "\n").replace(/\r\n/g, "\n").trim();
 
   if (!projectId || !clientEmail || !privateKey) {
     throw new Error("Fill in firebase settings in lib/server-config.ts");
@@ -46,6 +46,7 @@ function createClient(databaseId: string) {
     projectId: credentials.projectId,
     databaseId,
     ignoreUndefinedProperties: true,
+    preferRest: true,
     credentials: {
       client_email: credentials.clientEmail,
       private_key: credentials.privateKey,
@@ -53,10 +54,11 @@ function createClient(databaseId: string) {
   });
 }
 
-function isMissingDatabase(error: unknown) {
-  const code = error && typeof error === "object" && "code" in error ? String((error as { code: unknown }).code) : "";
-  const message = error instanceof Error ? error.message : String(error);
-  return code === "5" || /NOT_FOUND/i.test(message);
+function databaseCandidates(listed: string[]) {
+  const configured = serverConfig.firestoreDatabaseId?.trim();
+  const aliases =
+    configured === "default" || configured === "(default)" ? ["(default)", "default"] : [configured, "(default)", "default"];
+  return [...new Set([...listed, ...aliases].filter((id): id is string => Boolean(id)))];
 }
 
 async function listDatabaseIds(credentials: Credentials) {
@@ -95,12 +97,10 @@ async function connectFirestore() {
   if (globalForFirebase.lootrushsFirestore) return globalForFirebase.lootrushsFirestore;
 
   const credentials = loadServiceAccount();
-  const listed = await listDatabaseIds(credentials);
-  const configured = serverConfig.firestoreDatabaseId?.trim();
-  const ids = [...new Set([...listed, configured, "default", "(default)"].filter((id): id is string => Boolean(id)))];
-
+  let listed: string[] = [];
   let lastError: unknown;
-  for (const id of ids) {
+
+  for (const id of databaseCandidates([])) {
     try {
       globalForFirebase.lootrushsFirestore = await probe(id);
       console.info(`Firestore connected using database "${id}"`);
@@ -108,14 +108,25 @@ async function connectFirestore() {
     } catch (error) {
       lastError = error;
       console.error(`Firestore probe failed for "${id}":`, error instanceof Error ? error.message : error);
-      if (!isMissingDatabase(error)) throw error;
+    }
+  }
+
+  listed = await listDatabaseIds(credentials);
+  for (const id of listed.filter((item) => !databaseCandidates([]).includes(item))) {
+    try {
+      globalForFirebase.lootrushsFirestore = await probe(id);
+      console.info(`Firestore connected using database "${id}"`);
+      return globalForFirebase.lootrushsFirestore;
+    } catch (error) {
+      lastError = error;
+      console.error(`Firestore probe failed for "${id}":`, error instanceof Error ? error.message : error);
     }
   }
 
   const detail = lastError instanceof Error ? lastError.message : "NOT_FOUND";
   const listedText = listed.length ? `Found database id(s): ${listed.join(", ")}.` : "Could not list any Firestore databases.";
   throw new Error(
-    `Could not open Firestore (${detail}). ${listedText} The console database named "default" is not the same as "(default)". If this database is Enterprise edition, create a Standard edition database with ID (default), then restart npm run dev.`,
+    `Could not open Firestore (${detail}). ${listedText} The console database named "default" is not the same as "(default)".`,
   );
 }
 
@@ -123,7 +134,8 @@ export async function firestore() {
   if (!globalForFirebase.lootrushsFirestorePromise) {
     globalForFirebase.lootrushsFirestorePromise = connectFirestore().catch((error) => {
       globalForFirebase.lootrushsFirestorePromise = undefined;
-      throw error;
+      const message = error instanceof Error ? error.message : String(error);
+      throw message.startsWith("Could not open Firestore") ? error : new Error(`Could not open Firestore (${message})`);
     });
   }
   return globalForFirebase.lootrushsFirestorePromise;

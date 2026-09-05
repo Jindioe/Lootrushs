@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  serverExternalPackages: ["firebase-admin"],
+  serverExternalPackages: ["firebase-admin", "@google-cloud/firestore", "google-auth-library", "google-gax"],
   experimental: {
     serverActions: {
       bodySizeLimit: "12mb",
