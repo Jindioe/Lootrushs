@@ -30,9 +30,10 @@ export default function CareersPage() {
       <BrandHero plain eyebrow="Careers" title="Seats we are staffing now.">
         <p className="mt-5 max-w-2xl text-muted">
           These are live openings for client benches — designers, engineers, and a PM we can place
-          this quarter. Pay is USD cash, remote, with US Eastern overlap. Ranges differ by seat.
-          Token or equity is only in an offer if that client has it. Apply here; after our process
-          you may interview with the client.
+          this quarter. Each seat is open as full-time, part-time, or advisory. Full-time is an
+          annual cash range. Part-time is hourly for 15–25 hours a week. Advisory is a day rate,
+          usually 1–4 days a month. Remote, with US Eastern overlap. Token or equity only appears
+          if that client has it. Apply here; after our process you may interview with the client.
         </p>
         <dl className="mt-10 grid max-w-2xl grid-cols-3 gap-6 border-t border-line pt-8">
           <div>

@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { ServiceVisual } from "@/components/ServiceVisual";
 import { StatBar } from "@/components/StatBar";
 import { WorkVisual } from "@/components/WorkVisual";
-import { formatSalary, jobs } from "@/lib/jobs";
+import { jobComp, jobs } from "@/lib/jobs";
 import {
   audiences,
   chains,
@@ -237,7 +237,9 @@ export default function HomePage() {
               .filter((job) =>
                 ["web3-designer", "senior-blockchain-developer", "product-manager-web3"].includes(job.slug),
               )
-              .map((job) => (
+              .map((job) => {
+                const pay = jobComp(job.salary);
+                return (
                 <Link
                   key={job.slug}
                   href={`/careers/${job.slug}`}
@@ -246,9 +248,12 @@ export default function HomePage() {
                   <span className="text-[11px] uppercase tracking-[0.16em] text-gold">{job.department}</span>
                   <h3 className="mt-5 font-display text-2xl">{job.title}</h3>
                   <p className="mt-3 text-sm leading-6 text-muted">{job.summary}</p>
-                  <p className="mt-4 text-sm text-gold">{formatSalary(job.salary.min, job.salary.max)}</p>
+                  <p className="mt-4 text-sm text-gold">
+                    {pay.fullTime}/yr · {pay.partTime} · {pay.advisory}
+                  </p>
                 </Link>
-              ))}
+                );
+              })}
           </div>
         </div>
       </section>

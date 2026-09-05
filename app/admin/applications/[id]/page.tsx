@@ -56,6 +56,7 @@ export default async function AdminApplicationPage({
       <h1 className="mt-3 font-display text-4xl">{application.full_name}</h1>
       <p className="mt-3 text-muted">
         {application.role}
+        {application.engagement ? ` · ${application.engagement}` : ""}
         {application.location ? ` · ${application.location}` : ""}
       </p>
       <p className="mt-2 text-sm text-muted">{formatWhen(application.created_at)}</p>

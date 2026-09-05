@@ -15,8 +15,9 @@ export default function OpenApplyPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Careers</p>
         <h1 className="mt-3 font-display text-4xl md:text-6xl">Open application</h1>
         <p className="mt-5 max-w-md text-muted">
-          Tell us what you want to build. You apply to Lootrushs; we match qualified people to
-          client projects. Your application is stored privately.
+          Tell us what you want to build and whether you want full-time, part-time, or advisory.
+          You apply to Lootrushs; we match qualified people to client projects. Your application
+          is stored privately.
         </p>
         <Photo src={media.careers} alt="Lootrushs hiring" className="mt-10 aspect-[16/11] rounded-3xl" />
         <ul className="mt-8 space-y-3 text-sm leading-6 text-muted">

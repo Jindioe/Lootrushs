@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplyForm } from "@/components/ApplyForm";
 import { BrandHero } from "@/components/BrandHero";
-import { equityNote, formatSalary, getJob, hiringNote, jobs } from "@/lib/jobs";
+import { advisoryNote, equityNote, getJob, hiringNote, jobComp, jobs, partTimeNote } from "@/lib/jobs";
 import { media, site } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -26,6 +26,7 @@ export default async function JobPage({ params }: Props) {
   const { slug } = await params;
   const job = getJob(slug);
   if (!job) notFound();
+  const comp = jobComp(job.salary);
 
   return (
     <>
@@ -43,18 +44,40 @@ export default async function JobPage({ params }: Props) {
           ← All roles
         </Link>
         <div className="mt-5 flex flex-wrap gap-2 text-xs">
-          <span className="rounded-full border border-line px-2.5 py-1 text-muted">{job.type}</span>
+          {job.engagements.map((item) => (
+            <span key={item} className="rounded-full border border-line px-2.5 py-1 text-gold">
+              {item}
+            </span>
+          ))}
           <span className="rounded-full border border-line px-2.5 py-1 text-muted">{job.level}</span>
           <span className="rounded-full border border-line px-2.5 py-1 text-muted">{job.location}</span>
           <span className="rounded-full border border-line px-2.5 py-1 text-gold">{job.stack}</span>
         </div>
         <div className="mt-8 rounded-2xl border border-line bg-card p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Compensation</p>
-          <p className="mt-3 font-display text-2xl text-ink">
-            {formatSalary(job.salary.min, job.salary.max)}{" "}
-            <span className="text-lg text-muted">USD cash</span>
-          </p>
-          <p className="mt-2 text-sm leading-6 text-muted">{equityNote}</p>
+          <dl className="mt-5 space-y-5">
+            <div>
+              <dt className="text-xs uppercase tracking-[0.16em] text-muted">Full-time</dt>
+              <dd className="mt-1 font-display text-2xl text-ink">
+                {comp.fullTime} <span className="text-lg text-muted">/ year</span>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-[0.16em] text-muted">Part-time</dt>
+              <dd className="mt-1 font-display text-2xl text-ink">
+                {comp.partTime} <span className="text-lg text-muted">· 15–25 hrs / week</span>
+              </dd>
+              <p className="mt-1 text-sm leading-6 text-muted">{partTimeNote}</p>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-[0.16em] text-muted">Advisory</dt>
+              <dd className="mt-1 font-display text-2xl text-ink">
+                {comp.advisory} <span className="text-lg text-muted">· 1–4 days / month</span>
+              </dd>
+              <p className="mt-1 text-sm leading-6 text-muted">{advisoryNote}</p>
+            </div>
+          </dl>
+          <p className="mt-5 text-sm leading-6 text-muted">{equityNote}</p>
         </div>
         <p className="mt-8 text-lg leading-8 text-muted">{job.summary}</p>
         <p className="mt-5 whitespace-pre-line text-base leading-8 text-muted">{job.about}</p>
@@ -92,7 +115,7 @@ export default async function JobPage({ params }: Props) {
       </article>
 
       <aside className="lg:sticky lg:top-24 lg:self-start">
-        <ApplyForm role={job.title} roleSlug={job.slug} />
+        <ApplyForm role={job.title} roleSlug={job.slug} engagements={job.engagements} />
       </aside>
     </div>
     </>

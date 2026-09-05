@@ -49,6 +49,7 @@ export default async function AdminApplicationsPage() {
                 <th className="px-4 py-3 font-medium">Email</th>
                 <th className="px-4 py-3 font-medium">LinkedIn</th>
                 <th className="px-4 py-3 font-medium">Role</th>
+                <th className="px-4 py-3 font-medium">Engagement</th>
                 <th className="px-4 py-3 font-medium">Resume</th>
               </tr>
             </thead>
@@ -82,6 +83,7 @@ export default async function AdminApplicationsPage() {
                     )}
                   </td>
                   <td className="px-4 py-3">{application.role}</td>
+                  <td className="px-4 py-3">{application.engagement || "—"}</td>
                   <td className="px-4 py-3">
                     {application.resume_stored_name ? (
                       <a href={`/api/admin/resume/${application.id}`} className="text-gold hover:text-gold-soft">

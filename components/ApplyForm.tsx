@@ -3,6 +3,7 @@
 import type { FormEvent, ReactNode } from "react";
 import { useState } from "react";
 import { ApplyCaptcha } from "@/components/ApplyCaptcha";
+import { engagementTypes, type Engagement } from "@/lib/jobs";
 
 const MAX_RESUME_BYTES = 3 * 1024 * 1024;
 
@@ -31,7 +32,15 @@ function Field({
   );
 }
 
-export function ApplyForm({ role, roleSlug = "" }: { role: string; roleSlug?: string }) {
+export function ApplyForm({
+  role,
+  roleSlug = "",
+  engagements = engagementTypes,
+}: {
+  role: string;
+  roleSlug?: string;
+  engagements?: readonly Engagement[];
+}) {
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [error, setError] = useState("");
   const [fileName, setFileName] = useState("");
@@ -112,9 +121,27 @@ export function ApplyForm({ role, roleSlug = "" }: { role: string; roleSlug?: st
           </Field>
         </div>
 
-        <Field id="location" label="Location">
-          <input id="location" name="location" required placeholder="City, country" autoComplete="address-level2" className={fieldClass} />
-        </Field>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field id="location" label="Location">
+            <input id="location" name="location" required placeholder="City, country" autoComplete="address-level2" className={fieldClass} />
+          </Field>
+          <Field
+            id="engagement"
+            label="Engagement"
+            hint="PT is 15–25 hrs / week · Advisory is a day rate"
+          >
+            <select id="engagement" name="engagement" required defaultValue="" className={fieldClass}>
+              <option value="" disabled>
+                Select one
+              </option>
+              {engagements.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <Field id="linkedin" label="LinkedIn">

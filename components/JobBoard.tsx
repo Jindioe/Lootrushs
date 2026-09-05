@@ -2,19 +2,21 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { departments, formatSalary, jobs, levels, type Job } from "@/lib/jobs";
+import { departments, engagementTypes, jobComp, jobs, levels, type Engagement, type Job } from "@/lib/jobs";
 
 export function JobBoard() {
   const [department, setDepartment] = useState<string>("All");
   const [level, setLevel] = useState<string>("All");
+  const [engagement, setEngagement] = useState<string>("All");
 
   const filtered = useMemo(() => {
     return jobs.filter((job) => {
       const deptOk = department === "All" || job.department === department;
       const levelOk = level === "All" || job.level === level;
-      return deptOk && levelOk;
+      const engagementOk = engagement === "All" || job.engagements.includes(engagement as Engagement);
+      return deptOk && levelOk && engagementOk;
     });
-  }, [department, level]);
+  }, [department, level, engagement]);
 
   const deptCounts = useMemo(() => {
     const map = new Map<string, number>();
@@ -66,6 +68,21 @@ export function JobBoard() {
         ))}
       </div>
 
+      <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+        Engagement
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <FilterChip label="All engagements" active={engagement === "All"} onClick={() => setEngagement("All")} />
+        {engagementTypes.map((name) => (
+          <FilterChip
+            key={name}
+            label={name}
+            active={engagement === name}
+            onClick={() => setEngagement(name)}
+          />
+        ))}
+      </div>
+
       <p className="mt-6 text-sm text-muted">
         {filtered.length} role{filtered.length === 1 ? "" : "s"}
       </p>
@@ -106,6 +123,7 @@ function FilterChip({
 }
 
 function JobRow({ job }: { job: Job }) {
+  const comp = jobComp(job.salary);
   return (
     <Link
       href={`/careers/${job.slug}`}
@@ -114,13 +132,18 @@ function JobRow({ job }: { job: Job }) {
       <div>
         <h2 className="font-display text-xl text-ink">{job.title}</h2>
         <p className="mt-1 text-sm text-muted">{job.summary}</p>
+        <p className="mt-2 text-xs text-muted">
+          FT {comp.fullTime}/yr · PT {comp.partTime} · Adv {comp.advisory}
+        </p>
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2 text-xs">
         <span className="rounded-full border border-line px-2.5 py-1 text-gold">{job.department}</span>
+        {job.engagements.map((item) => (
+          <span key={item} className="rounded-full border border-line px-2.5 py-1 text-muted">
+            {item}
+          </span>
+        ))}
         <span className="rounded-full border border-line px-2.5 py-1 text-muted">{job.level}</span>
-        <span className="rounded-full border border-line px-2.5 py-1 text-muted">
-          {formatSalary(job.salary.min, job.salary.max)}
-        </span>
         <span className="text-gold">Apply →</span>
       </div>
     </Link>

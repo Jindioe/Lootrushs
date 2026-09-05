@@ -9,6 +9,7 @@ export type ApplicationRow = {
   created_at: Date;
   role: string;
   role_slug: string | null;
+  engagement: string | null;
   full_name: string;
   email: string;
   location: string | null;
@@ -41,6 +42,7 @@ function fromDoc(id: string, data: DocumentData): ApplicationRow {
     created_at: asDate(data.created_at),
     role: typeof data.role === "string" ? data.role : "",
     role_slug: asString(data.role_slug),
+    engagement: asString(data.engagement),
     full_name: typeof data.full_name === "string" ? data.full_name : "",
     email: typeof data.email === "string" ? data.email : "",
     location: asString(data.location),
@@ -59,6 +61,7 @@ function fromDoc(id: string, data: DocumentData): ApplicationRow {
 export async function insertApplication(input: {
   role: string;
   roleSlug: string | null;
+  engagement: string | null;
   fullName: string;
   email: string;
   location: string | null;
@@ -77,6 +80,7 @@ export async function insertApplication(input: {
     created_at: createdAt,
     role: input.role,
     role_slug: input.roleSlug,
+    engagement: input.engagement,
     full_name: input.fullName,
     email: input.email,
     location: input.location,

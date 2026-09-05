@@ -12,12 +12,20 @@ export type Department =
 
 export type Level = "Mid" | "Senior" | "Staff" | "Lead" | "Executive";
 
+export const engagementTypes = ["Full-time", "Part-time", "Advisory"] as const;
+export type Engagement = (typeof engagementTypes)[number];
+
+export function isEngagement(value: string): value is Engagement {
+  return (engagementTypes as readonly string[]).includes(value);
+}
+
 export type Job = {
   slug: string;
   title: string;
   department: Department;
   level: Level;
-  type: "Full-time" | "Contract";
+  type: Engagement;
+  engagements: Engagement[];
   location: string;
   stack: string;
   summary: string;
@@ -29,14 +37,58 @@ export type Job = {
 };
 
 export const equityNote =
-  "USD cash for remote work with US Eastern overlap. The range is for the seat, not a promise of the top number. Location and the client brief can move it. Token or equity only appears in an offer if that client has it — not on every seat.";
+  "All figures are USD cash, remote, with US Eastern overlap. Location and the client brief can move the number. Token or equity only appears if that client has it.";
+
+export const partTimeNote = "15–25 hours a week. Billed hourly.";
+
+export const advisoryNote =
+  "Day rate for reviews, working sessions, and office hours. Typical cadence is 1–4 days a month. A monthly retainer is an option in the offer.";
 
 export const hiringNote =
-  "Roles are posted by Lootrushs. We source, screen, and interview — or a client introduces a candidate to us. After you pass our process, you may interview with the client company. If both sides agree, you join through Lootrushs and work on that client’s product.";
+  "Roles are posted by Lootrushs as full-time, part-time, or advisory — pick one on the form. We source, screen, and interview — or a client introduces a candidate to us. After you pass our process, you may interview with the client company. If both sides agree, you join through Lootrushs and work on that client’s product.";
+
+const FT_HOURS = 2080;
+
+function roundTo(value: number, step: number) {
+  return Math.round(value / step) * step;
+}
 
 export function formatSalary(min: number, max: number) {
   const usd = (n: number) => `$${Math.round(n / 1000)}k`;
   return `${usd(min)}–${usd(max)}`;
+}
+
+export function formatHourly(min: number, max: number) {
+  return `$${min}–$${max}/hr`;
+}
+
+export function formatDaily(min: number, max: number) {
+  const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+  return `${usd(min)}–${usd(max)}/day`;
+}
+
+/** Part-time contractor hourly from the full-time cash band. */
+export function partTimeHourly(annual: number) {
+  return roundTo((annual / FT_HOURS) * 1.2, 5);
+}
+
+/** Advisory day rate from the full-time cash band. */
+export function advisoryDaily(annual: number) {
+  return roundTo((annual / FT_HOURS) * 8 * 1.5, 50);
+}
+
+export type JobComp = {
+  fullTime: string;
+  partTime: string;
+  advisory: string;
+};
+
+export function jobComp(salary: { min: number; max: number }): JobComp {
+  return {
+    fullTime: formatSalary(salary.min, salary.max),
+    partTime: formatHourly(partTimeHourly(salary.min), partTimeHourly(salary.max)),
+    advisory: formatDaily(advisoryDaily(salary.min), advisoryDaily(salary.max)),
+  };
 }
 
 const salaryBySlug: Record<string, { min: number; max: number }> = {
@@ -95,7 +147,7 @@ function role(
   responsibilities: string[],
   requirements: string[],
   niceToHave: string[],
-  type: Job["type"] = "Full-time",
+  engagements: Engagement[] = ["Full-time", "Part-time", "Advisory"],
 ): Job {
   const salary = salaryBySlug[slug];
   if (!salary) throw new Error(`Missing salary for ${slug}`);
@@ -104,7 +156,8 @@ function role(
     title,
     department,
     level,
-    type,
+    type: engagements[0] ?? "Full-time",
+    engagements,
     location: "Remote",
     stack,
     summary,
@@ -247,7 +300,6 @@ const catalog: Job[] = [
       "You can take a Figma file and return an implementable animation, not only a concept.",
     ],
     ["Rive", "Spline or Three.js", "Game VFX", "Previous crypto or fintech motion"],
-    "Contract",
   ),
   role(
     "design-lead",
@@ -501,7 +553,7 @@ const catalog: Job[] = [
     "Senior",
     "Solidity · Foundry · OpenZeppelin",
     "Own protocol-grade Solidity for tokens, vaults, staking, and custom logic — including BrickFi and client launches.",
-    "Senior seat: you set patterns, review PRs, and stay through deploy. You will be in audit calls. You will tell a client no when they want an owner that can rug.\n\nCurrent load is BrickFi issuance and client vault/staking work. You work with a mid contract engineer, security, and frontend. Compensation is $180k–$220k base plus token or equity in the offer.",
+    "Senior seat: you set patterns, review PRs, and stay through deploy. You will be in audit calls. You will tell a client no when they want an owner that can rug.\n\nCurrent load is BrickFi issuance and client vault/staking work. You work with a mid contract engineer, security, and frontend. Pay is listed on the posting by engagement — full-time cash, part-time hourly, or an advisory day rate.",
     [
       "Write, test, and ship Solidity with Foundry or Hardhat.",
       "Model access control, upgrades, pauses, and invariants before the first line of happy-path code.",
@@ -854,7 +906,6 @@ const catalog: Job[] = [
       "Comfortable with uncertainty; you do not present point estimates as facts.",
     ],
     ["cadCAD or similar", "Mechanism design background", "DAO operations", "Published research"],
-    "Contract",
   ),
   role(
     "head-of-product",
@@ -974,7 +1025,6 @@ const catalog: Job[] = [
       "Native or near-native English writing.",
     ],
     ["MDX", "Diagrams", "Prior protocol docs", "Journalism or research background"],
-    "Contract",
   ),
   role(
     "growth-marketing-web3",
@@ -1095,7 +1145,6 @@ const catalog: Job[] = [
       "Comfortable working with engineers who will ask “can we ship Friday?”",
     ],
     ["Bar admission", "Securities", "International", "In-house at a protocol or fintech"],
-    "Contract",
   ),
   role(
     "token-operations-finance",

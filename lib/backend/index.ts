@@ -5,6 +5,7 @@ import { saveResume } from "./resumes";
 export type SubmitApplicationInput = {
   role: string;
   roleSlug: string | null;
+  engagement: string | null;
   fullName: string;
   email: string;
   location: string | null;
@@ -20,6 +21,7 @@ export async function submitApplication(input: SubmitApplicationInput): Promise<
   return insertApplication({
     role: input.role,
     roleSlug: input.roleSlug,
+    engagement: input.engagement,
     fullName: input.fullName,
     email: input.email,
     location: input.location,

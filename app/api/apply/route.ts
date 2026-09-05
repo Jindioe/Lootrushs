@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { submitApplication } from "@/lib/backend";
 import { verifyCaptcha } from "@/lib/captcha";
+import { engagementTypes, getJob, isEngagement } from "@/lib/jobs";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     const form = await request.formData();
     const role = text(form, "role");
     const roleSlug = text(form, "roleSlug") || null;
+    const engagement = text(form, "engagement");
     const fullName = text(form, "name");
     const email = text(form, "email");
     const location = text(form, "location");
@@ -52,6 +54,20 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+    if (!isEngagement(engagement)) {
+      return NextResponse.json(
+        { error: "Choose full-time, part-time, or advisory." },
+        { status: 400 },
+      );
+    }
+    const job = roleSlug ? getJob(roleSlug) : undefined;
+    const allowed = job?.engagements ?? engagementTypes;
+    if (!allowed.includes(engagement)) {
+      return NextResponse.json(
+        { error: "That engagement is not open for this role." },
+        { status: 400 },
+      );
+    }
     if (!linkedin) {
       return NextResponse.json({ error: "Enter a valid LinkedIn URL." }, { status: 400 });
     }
@@ -65,6 +81,7 @@ export async function POST(request: Request) {
     await submitApplication({
       role,
       roleSlug,
+      engagement,
       fullName,
       email,
       location,
