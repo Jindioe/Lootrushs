@@ -23,6 +23,10 @@ export const metadata: Metadata = {
   },
   description: site.description,
   applicationName: site.name,
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: "/lootrushs-avatar.png",
+  },
   openGraph: {
     title: site.name,
     description: site.description,
