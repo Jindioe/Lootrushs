@@ -51,7 +51,8 @@ export default async function JobPage({ params }: Props) {
         <div className="mt-8 rounded-2xl border border-line bg-card p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Compensation</p>
           <p className="mt-3 font-display text-2xl text-ink">
-            {formatSalary(job.salary.min, job.salary.max)}
+            {formatSalary(job.salary.min, job.salary.max)}{" "}
+            <span className="text-lg text-muted">USD cash</span>
           </p>
           <p className="mt-2 text-sm leading-6 text-muted">{equityNote}</p>
         </div>

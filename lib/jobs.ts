@@ -29,45 +29,45 @@ export type Job = {
 };
 
 export const equityNote =
-  "Token or equity on top of base, sized to the role. Details come in the offer, not in this posting.";
+  "USD cash for remote work with US Eastern overlap. The range is for the seat, not a promise of the top number. Location and the client brief can move it. Token or equity only appears in an offer if that client has it — not on every seat.";
 
 export const hiringNote =
   "Roles are posted by Lootrushs. We source, screen, and interview — or a client introduces a candidate to us. After you pass our process, you may interview with the client company. If both sides agree, you join through Lootrushs and work on that client’s product.";
 
 export function formatSalary(min: number, max: number) {
   const usd = (n: number) => `$${Math.round(n / 1000)}k`;
-  return `${usd(min)} – ${usd(max)} USD (base)`;
+  return `${usd(min)}–${usd(max)}`;
 }
 
 const salaryBySlug: Record<string, { min: number; max: number }> = {
-  "web3-designer": { min: 125000, max: 160000 },
-  "product-designer-dapps": { min: 130000, max: 165000 },
-  "senior-web3-designer": { min: 165000, max: 200000 },
+  "web3-designer": { min: 110000, max: 145000 },
+  "product-designer-dapps": { min: 118000, max: 152000 },
+  "senior-web3-designer": { min: 148000, max: 188000 },
   "brand-designer-web3": { min: 115000, max: 150000 },
   "motion-designer-web3": { min: 120000, max: 155000 },
   "design-lead": { min: 175000, max: 215000 },
   "head-of-design": { min: 210000, max: 270000 },
-  "smart-contract-engineer": { min: 145000, max: 180000 },
+  "smart-contract-engineer": { min: 142000, max: 178000 },
   "blockchain-engineer-evm": { min: 145000, max: 180000 },
-  "solana-rust-engineer": { min: 150000, max: 185000 },
-  "fullstack-web3-engineer": { min: 145000, max: 180000 },
-  "frontend-dapp-engineer": { min: 140000, max: 175000 },
-  "defi-protocol-engineer": { min: 185000, max: 225000 },
-  "rwa-real-estate-engineer": { min: 145000, max: 180000 },
+  "solana-rust-engineer": { min: 155000, max: 198000 },
+  "fullstack-web3-engineer": { min: 135000, max: 172000 },
+  "frontend-dapp-engineer": { min: 128000, max: 162000 },
+  "defi-protocol-engineer": { min: 168000, max: 215000 },
+  "rwa-real-estate-engineer": { min: 138000, max: 176000 },
   "mobile-web3-engineer": { min: 140000, max: 175000 },
-  "senior-smart-contract-engineer": { min: 180000, max: 220000 },
-  "senior-blockchain-developer": { min: 180000, max: 220000 },
+  "senior-smart-contract-engineer": { min: 175000, max: 222000 },
+  "senior-blockchain-developer": { min: 168000, max: 208000 },
   "senior-fullstack-web3-engineer": { min: 180000, max: 220000 },
   "staff-principal-engineer": { min: 220000, max: 270000 },
-  "blockchain-devops-engineer": { min: 140000, max: 175000 },
+  "blockchain-devops-engineer": { min: 128000, max: 164000 },
   "qa-engineer-web3": { min: 120000, max: 155000 },
   "engineering-manager": { min: 190000, max: 240000 },
   "director-of-engineering": { min: 220000, max: 280000 },
   "vp-of-engineering": { min: 250000, max: 320000 },
-  "smart-contract-security-engineer": { min: 190000, max: 235000 },
+  "smart-contract-security-engineer": { min: 185000, max: 240000 },
   "head-of-security": { min: 220000, max: 290000 },
   "web3-data-engineer": { min: 145000, max: 180000 },
-  "product-manager-web3": { min: 140000, max: 175000 },
+  "product-manager-web3": { min: 132000, max: 168000 },
   "senior-product-manager-web3": { min: 170000, max: 210000 },
   "tokenomics-researcher": { min: 160000, max: 200000 },
   "head-of-product": { min: 210000, max: 280000 },
@@ -116,7 +116,7 @@ function role(
   };
 }
 
-export const jobs: Job[] = [
+const catalog: Job[] = [
   role(
     "web3-designer",
     "Web3 Designer",
@@ -1149,18 +1149,28 @@ export const jobs: Job[] = [
   ),
 ];
 
-export const departments: Department[] = [
-  "Design",
-  "Engineering",
-  "Security",
-  "Data",
-  "Product",
-  "Growth",
-  "Operations",
-  "Leadership",
-];
+const openSlugs = new Set([
+  "web3-designer",
+  "product-designer-dapps",
+  "senior-web3-designer",
+  "smart-contract-engineer",
+  "solana-rust-engineer",
+  "frontend-dapp-engineer",
+  "fullstack-web3-engineer",
+  "defi-protocol-engineer",
+  "rwa-real-estate-engineer",
+  "senior-smart-contract-engineer",
+  "senior-blockchain-developer",
+  "blockchain-devops-engineer",
+  "smart-contract-security-engineer",
+  "product-manager-web3",
+]);
 
-export const levels: Level[] = ["Mid", "Senior", "Staff", "Lead", "Executive"];
+export const jobs: Job[] = catalog.filter((job) => openSlugs.has(job.slug));
+
+export const departments: Department[] = [...new Set(jobs.map((job) => job.department))];
+
+export const levels: Level[] = [...new Set(jobs.map((job) => job.level))];
 
 export function getJob(slug: string) {
   return jobs.find((job) => job.slug === slug);

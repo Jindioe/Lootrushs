@@ -82,7 +82,7 @@ export default function HomePage() {
           { value: String(services.length), label: "capability areas" },
           { value: String(chains.length), label: "chains we ship on" },
           { value: String(projects.length), label: "published case studies" },
-          { value: `${jobs.length}+`, label: "roles posted by Lootrushs" },
+          { value: String(jobs.length), label: "open seats on the bench" },
         ]}
       />
 
@@ -227,14 +227,16 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-5 py-20">
           <SectionHeading
             eyebrow="Careers"
-            title={`${jobs.length} roles, posted by Lootrushs.`}
+            title={`${jobs.length} seats we can staff now.`}
             body="We hire under our name, then match you to client work. After our process you may interview with the client."
             href="/careers"
-            action="View all jobs"
+            action="View open seats"
           />
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {jobs
-              .filter((job) => ["web3-designer", "senior-blockchain-developer", "cto"].includes(job.slug))
+              .filter((job) =>
+                ["web3-designer", "senior-blockchain-developer", "product-manager-web3"].includes(job.slug),
+              )
               .map((job) => (
                 <Link
                   key={job.slug}

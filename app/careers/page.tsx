@@ -27,20 +27,21 @@ export default function CareersPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-bg/70 via-bg/40 to-bg/25" />
       </div>
 
-      <BrandHero plain eyebrow="Careers" title="We're hiring.">
+      <BrandHero plain eyebrow="Careers" title="Seats we are staffing now.">
         <p className="mt-5 max-w-2xl text-muted">
-          {jobs.length} roles posted under the Lootrushs name. We source, screen, and interview,
-          then match you to client work. After our process you may interview with the client. Base
-          pay is listed on every posting.
+          These are live openings for client benches — designers, engineers, and a PM we can place
+          this quarter. Pay is USD cash, remote, with US Eastern overlap. Ranges differ by seat.
+          Token or equity is only in an offer if that client has it. Apply here; after our process
+          you may interview with the client.
         </p>
         <dl className="mt-10 grid max-w-2xl grid-cols-3 gap-6 border-t border-line pt-8">
           <div>
             <dt className="font-display text-3xl text-gold">{jobs.length}</dt>
-            <dd className="mt-1 text-xs uppercase tracking-wide text-muted">open postings</dd>
+            <dd className="mt-1 text-xs uppercase tracking-wide text-muted">open seats</dd>
           </div>
           <div>
             <dt className="font-display text-3xl text-gold">{departments.length}</dt>
-            <dd className="mt-1 text-xs uppercase tracking-wide text-muted">departments</dd>
+            <dd className="mt-1 text-xs uppercase tracking-wide text-muted">disciplines</dd>
           </div>
           <div>
             <dt className="font-display text-3xl text-gold">Remote</dt>
@@ -68,9 +69,10 @@ export default function CareersPage() {
 
         <div className="mt-12 rounded-3xl border border-line bg-raised/90 p-8 backdrop-blur-sm md:flex md:items-center md:justify-between md:gap-10 md:p-10">
           <div>
-            <h2 className="font-display text-2xl md:text-3xl">Don&apos;t see your role?</h2>
+            <h2 className="font-display text-2xl md:text-3xl">Different specialty?</h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-muted">
-              We still want specialists we have not named. Submit an open application with your resume.
+              We keep the board short on purpose. If you do protocol, data, or another seat we have
+              not listed, send an open application.
             </p>
           </div>
           <Link
