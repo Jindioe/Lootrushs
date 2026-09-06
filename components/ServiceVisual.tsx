@@ -49,7 +49,7 @@ export function ServiceVisual({ slug, className = "aspect-[16/10]" }: { slug: st
   const visual = visuals[slug] ?? visuals["smart-contracts"];
 
   return (
-    <div className={`relative overflow-hidden bg-bg ${className}`}>
+    <div className={`relative min-w-0 overflow-hidden bg-bg ${className}`}>
       <Image src={visual.photo} alt={visual.alt} fill className="object-cover" sizes="(min-width: 1024px) 50vw, 100vw" />
       <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/35 to-transparent" />
       <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4">

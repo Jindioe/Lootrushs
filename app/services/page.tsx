@@ -43,10 +43,13 @@ export default function ServicesPage() {
           <article
             id={service.slug}
             key={service.slug}
-            className="scroll-mt-24 overflow-hidden rounded-3xl border border-line bg-card lg:grid lg:grid-cols-[0.9fr_1.1fr]"
+            className="scroll-mt-24 overflow-hidden rounded-3xl border border-line bg-card lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-stretch"
           >
-            <ServiceVisual slug={service.slug} className="aspect-[16/10] lg:min-h-full" />
-            <div className="p-6 md:p-10">
+            <ServiceVisual
+              slug={service.slug}
+              className="aspect-[16/10] min-w-0 lg:aspect-auto lg:h-full lg:min-h-[22rem]"
+            />
+            <div className="min-w-0 p-6 md:p-10">
               <p className="text-[11px] uppercase tracking-[0.18em] text-gold">
                 {String(index + 1).padStart(2, "0")} · {service.stack}
               </p>

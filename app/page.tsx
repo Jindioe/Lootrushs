@@ -166,9 +166,9 @@ export default function HomePage() {
             href="/work"
             action="View all work"
           />
-          <article className="mt-10 overflow-hidden rounded-3xl border border-line bg-card lg:grid lg:grid-cols-2">
-            <WorkVisual slug={featured.slug} className="aspect-[16/11] lg:min-h-full" />
-            <div className="flex flex-col justify-center p-8 md:p-10">
+          <article className="mt-10 overflow-hidden rounded-3xl border border-line bg-card lg:grid lg:grid-cols-2 lg:items-stretch">
+            <WorkVisual slug={featured.slug} className="aspect-[16/11] min-w-0 lg:aspect-auto lg:h-full lg:min-h-[22rem]" />
+            <div className="flex min-w-0 flex-col justify-center p-8 md:p-10">
               <div className="flex flex-wrap gap-2">
                 {featured.tags.map((tag) => (
                   <span key={tag} className="rounded-full border border-line px-2.5 py-1 text-[11px] uppercase tracking-wide text-gold">
