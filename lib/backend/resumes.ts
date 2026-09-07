@@ -109,3 +109,20 @@ export async function readResume(storedPath: string) {
   }
   return Buffer.concat(parts);
 }
+
+export async function deleteResume(storedPath: string | null) {
+  if (!storedPath) return;
+  const prefix = `${RESUME_COLLECTION}/`;
+  if (!storedPath.startsWith(prefix) || storedPath.includes("..")) return;
+  const storedName = storedPath.slice(prefix.length);
+  if (!storedName) return;
+  const fileRef = (await firestore()).collection(RESUME_COLLECTION).doc(storedName);
+  const meta = await fileRef.get();
+  const chunkCount = Number(meta.data()?.chunkCount ?? 0);
+  const deletes = [];
+  for (let index = 0; index < chunkCount; index += 1) {
+    deletes.push(fileRef.collection("chunks").doc(String(index)).delete());
+  }
+  await Promise.all(deletes);
+  await fileRef.delete();
+}

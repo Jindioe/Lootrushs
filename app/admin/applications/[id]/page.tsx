@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminLogoutButton } from "@/components/AdminLogoutButton";
+import { ApplicationDeleteButton } from "@/components/ApplicationDeleteButton";
+import { ApplicationStatusSelect } from "@/components/ApplicationStatusSelect";
 import { getApplication } from "@/lib/backend";
 
 export const dynamic = "force-dynamic";
@@ -60,6 +62,15 @@ export default async function AdminApplicationPage({
         {application.location ? ` · ${application.location}` : ""}
       </p>
       <p className="mt-2 text-sm text-muted">{formatWhen(application.created_at)}</p>
+
+      <div className="mt-6 flex flex-wrap items-center gap-4">
+        <ApplicationStatusSelect id={application.id} status={application.status} />
+        <ApplicationDeleteButton
+          id={application.id}
+          name={application.full_name}
+          redirectTo="/admin"
+        />
+      </div>
 
       <dl className="mt-10 space-y-5 rounded-2xl border border-line bg-card p-6 text-sm">
         <div>

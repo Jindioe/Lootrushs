@@ -1,12 +1,18 @@
 import "server-only";
 import { firestore } from "./firebase";
 import type { DocumentData, Timestamp } from "firebase-admin/firestore";
+import {
+  DEFAULT_APPLICATION_STATUS,
+  isApplicationStatus,
+  type ApplicationStatus,
+} from "@/lib/application-status";
 
 export const APPLICATIONS_COLLECTION = "applications";
 
 export type ApplicationRow = {
   id: string;
   created_at: Date;
+  status: ApplicationStatus;
   role: string;
   role_slug: string | null;
   engagement: string | null;
@@ -40,6 +46,9 @@ function fromDoc(id: string, data: DocumentData): ApplicationRow {
   return {
     id,
     created_at: asDate(data.created_at),
+    status: isApplicationStatus(typeof data.status === "string" ? data.status : "")
+      ? (data.status as ApplicationStatus)
+      : DEFAULT_APPLICATION_STATUS,
     role: typeof data.role === "string" ? data.role : "",
     role_slug: asString(data.role_slug),
     engagement: asString(data.engagement),
@@ -78,6 +87,7 @@ export async function insertApplication(input: {
   const createdAt = new Date();
   const doc = {
     created_at: createdAt,
+    status: DEFAULT_APPLICATION_STATUS,
     role: input.role,
     role_slug: input.roleSlug,
     engagement: input.engagement,
@@ -108,4 +118,26 @@ export async function getApplication(id: string): Promise<ApplicationRow | null>
   const snap = await (await firestore()).collection(APPLICATIONS_COLLECTION).doc(id).get();
   if (!snap.exists) return null;
   return fromDoc(snap.id, snap.data() ?? {});
+}
+
+export async function updateApplicationStatus(
+  id: string,
+  status: ApplicationStatus,
+): Promise<ApplicationRow | null> {
+  if (!id) return null;
+  const ref = (await firestore()).collection(APPLICATIONS_COLLECTION).doc(id);
+  const snap = await ref.get();
+  if (!snap.exists) return null;
+  await ref.update({ status });
+  return fromDoc(ref.id, { ...snap.data(), status });
+}
+
+export async function deleteApplication(id: string): Promise<ApplicationRow | null> {
+  if (!id) return null;
+  const ref = (await firestore()).collection(APPLICATIONS_COLLECTION).doc(id);
+  const snap = await ref.get();
+  if (!snap.exists) return null;
+  const row = fromDoc(ref.id, snap.data() ?? {});
+  await ref.delete();
+  return row;
 }

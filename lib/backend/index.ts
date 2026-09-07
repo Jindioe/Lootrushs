@@ -37,5 +37,11 @@ export async function submitApplication(input: SubmitApplicationInput): Promise<
   });
 }
 
-export { getApplication, listApplications, type ApplicationRow } from "./applications";
-export { readResume } from "./resumes";
+export {
+  deleteApplication,
+  getApplication,
+  listApplications,
+  updateApplicationStatus,
+  type ApplicationRow,
+} from "./applications";
+export { deleteResume, readResume } from "./resumes";

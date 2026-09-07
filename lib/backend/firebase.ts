@@ -28,8 +28,11 @@ function loadServiceAccount(): Credentials {
   const privateKey = fb.private_key ? normalizePrivateKey(fb.private_key) : "";
 
   if (!projectId || !clientEmail || !privateKey) {
+    const local = process.env.VERCEL !== "1";
     throw new Error(
-      "Could not open Firestore. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in Vercel environment variables.",
+      local
+        ? "Could not open Firestore. Add FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY to .env.local, then restart npm run dev."
+        : "Could not open Firestore. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in Vercel environment variables.",
     );
   }
 
