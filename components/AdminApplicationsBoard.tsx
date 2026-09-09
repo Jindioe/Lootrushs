@@ -12,6 +12,7 @@ export type AdminApplicationListItem = {
   status: ApplicationStatus;
   full_name: string;
   email: string;
+  location: string | null;
   linkedin: string | null;
   role: string;
   engagement: string | null;
@@ -58,6 +59,7 @@ export function AdminApplicationsBoard({
               <th className="px-4 py-3 font-medium">Submitted</th>
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Email</th>
+              <th className="px-4 py-3 font-medium">Location</th>
               <th className="px-4 py-3 font-medium">LinkedIn</th>
               <th className="px-4 py-3 font-medium">Role</th>
               <th className="px-4 py-3 font-medium">Engagement</th>
@@ -80,6 +82,7 @@ export function AdminApplicationsBoard({
                     {application.email}
                   </a>
                 </td>
+                <td className="px-4 py-3">{application.location || "—"}</td>
                 <td className="px-4 py-3">
                   {application.linkedin ? (
                     <a

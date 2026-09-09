@@ -52,6 +52,7 @@ export default async function AdminApplicationsPage() {
             status: application.status || DEFAULT_APPLICATION_STATUS,
             full_name: application.full_name,
             email: application.email,
+            location: application.location,
             linkedin: application.linkedin,
             role: application.role,
             engagement: application.engagement,
