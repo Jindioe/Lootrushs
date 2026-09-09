@@ -4,7 +4,7 @@ import { useState } from "react";
 import { applicationStatuses, statusClass, type ApplicationStatus } from "@/lib/application-status";
 
 const selectClass =
-  "rounded-lg border border-line bg-bg px-2.5 py-1.5 text-sm outline-none transition focus:border-gold";
+  "w-full max-w-[8.5rem] rounded-md border border-line bg-bg px-1.5 py-1 text-xs outline-none transition focus:border-gold";
 
 export function ApplicationStatusSelect({
   id,

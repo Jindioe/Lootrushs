@@ -35,7 +35,7 @@ export function ApplicationDeleteButton({
     <button
       type="button"
       onClick={onDelete}
-      className="text-sm text-ember hover:text-gold"
+      className="text-xs text-ember hover:text-gold"
     >
       Delete
     </button>

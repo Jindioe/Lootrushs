@@ -22,8 +22,10 @@ export type AdminApplicationListItem = {
 
 function formatWhen(value: string) {
   return new Date(value).toLocaleString("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   });
 }
 
@@ -52,70 +54,113 @@ export function AdminApplicationsBoard({
       <p className="mt-3 text-sm text-muted">
         {count} {count === 1 ? "application" : "applications"} in Firebase.
       </p>
-      <div className="mt-10 overflow-x-auto rounded-2xl border border-line">
-        <table className="w-full min-w-[1080px] text-left text-sm">
-          <thead className="bg-raised text-xs uppercase tracking-wide text-muted">
+      <div className="mt-8 rounded-2xl border border-line">
+        <table className="w-full table-fixed text-left text-xs">
+          <colgroup>
+            <col className="w-[9%]" />
+            <col className="w-[18%]" />
+            <col className="w-[12%]" />
+            <col className="w-[7%]" />
+            <col className="w-[16%]" />
+            <col className="w-[10%]" />
+            <col className="w-[12%]" />
+            <col className="w-[6%]" />
+            <col className="w-[5%]" />
+            <col className="w-[5%]" />
+          </colgroup>
+          <thead className="bg-raised text-[10px] uppercase tracking-wide text-muted">
             <tr>
-              <th className="px-4 py-3 font-medium">Submitted</th>
-              <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">Email</th>
-              <th className="px-4 py-3 font-medium">Location</th>
-              <th className="px-4 py-3 font-medium">LinkedIn</th>
-              <th className="px-4 py-3 font-medium">Role</th>
-              <th className="px-4 py-3 font-medium">Engagement</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Resume</th>
-              <th className="px-4 py-3 font-medium"> </th>
+              <th className="px-2 py-2.5 font-medium">Submitted</th>
+              <th className="px-2 py-2.5 font-medium">Applicant</th>
+              <th className="px-2 py-2.5 font-medium">Location</th>
+              <th className="px-2 py-2.5 font-medium">Links</th>
+              <th className="px-2 py-2.5 font-medium">Role</th>
+              <th className="px-2 py-2.5 font-medium">Engagement</th>
+              <th className="px-2 py-2.5 font-medium">Status</th>
+              <th className="px-2 py-2.5 font-medium">Resume</th>
+              <th className="px-2 py-2.5 font-medium"> </th>
+              <th className="px-2 py-2.5 font-medium"> </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((application) => (
-              <tr key={application.id} className="border-t border-line bg-card">
-                <td className="px-4 py-3 text-muted">{formatWhen(application.created_at)}</td>
-                <td className="px-4 py-3">
-                  <Link href={`/admin/applications/${application.id}`} className="text-ink hover:text-gold">
+              <tr key={application.id} className="border-t border-line bg-card align-top">
+                <td className="px-2 py-2.5 text-muted whitespace-nowrap">{formatWhen(application.created_at)}</td>
+                <td className="px-2 py-2.5">
+                  <Link
+                    href={`/admin/applications/${application.id}`}
+                    className="block truncate font-medium text-ink hover:text-gold"
+                    title={application.full_name}
+                  >
                     {application.full_name}
                   </Link>
-                </td>
-                <td className="px-4 py-3">
-                  <a href={`mailto:${application.email}`} className="text-ink hover:text-gold">
+                  <a
+                    href={`mailto:${application.email}`}
+                    className="mt-0.5 block truncate text-muted hover:text-gold"
+                    title={application.email}
+                  >
                     {application.email}
                   </a>
                 </td>
-                <td className="px-4 py-3">{application.location || "—"}</td>
-                <td className="px-4 py-3">
+                <td className="px-2 py-2.5">
+                  <span className="block truncate text-ink" title={application.location || undefined}>
+                    {application.location || "—"}
+                  </span>
+                </td>
+                <td className="px-2 py-2.5">
                   {application.linkedin ? (
                     <a
                       href={application.linkedin}
                       target="_blank"
                       rel="noreferrer"
-                      className="break-all text-gold hover:text-gold-soft"
+                      className="text-gold hover:text-gold-soft"
+                      title={application.linkedin}
                     >
-                      {application.linkedin}
+                      LinkedIn
                     </a>
                   ) : (
                     <span className="text-muted">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3">{application.role}</td>
-                <td className="px-4 py-3">{application.engagement || "—"}</td>
-                <td className="px-4 py-3">
+                <td className="px-2 py-2.5">
+                  <span className="block truncate text-ink" title={application.role}>
+                    {application.role}
+                  </span>
+                </td>
+                <td className="px-2 py-2.5">
+                  <span className="block truncate text-ink" title={application.engagement || undefined}>
+                    {application.engagement || "—"}
+                  </span>
+                </td>
+                <td className="px-2 py-2.5">
                   <ApplicationStatusSelect
                     id={application.id}
                     status={application.status || DEFAULT_APPLICATION_STATUS}
                     onChanged={(status) => setStatus(application.id, status)}
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-2 py-2.5">
                   {application.resume_stored_name ? (
-                    <a href={`/api/admin/resume/${application.id}`} className="text-gold hover:text-gold-soft">
-                      {application.resume_original_name || "Download"}
+                    <a
+                      href={`/api/admin/resume/${application.id}`}
+                      className="text-gold hover:text-gold-soft"
+                      title={application.resume_original_name || "Download"}
+                    >
+                      CV
                     </a>
                   ) : (
-                    <span className="text-muted">None</span>
+                    <span className="text-muted">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-2 py-2.5">
+                  <Link
+                    href={`/admin/applications/${application.id}`}
+                    className="text-muted hover:text-gold"
+                  >
+                    Open
+                  </Link>
+                </td>
+                <td className="px-2 py-2.5">
                   <ApplicationDeleteButton
                     id={application.id}
                     name={application.full_name}

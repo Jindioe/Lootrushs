@@ -21,7 +21,7 @@ export default async function AdminApplicationsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16">
+    <div className="mx-auto max-w-[1600px] px-4 py-12 sm:px-5 sm:py-16">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold">Admin</p>
