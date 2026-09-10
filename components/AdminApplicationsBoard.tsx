@@ -35,13 +35,19 @@ export function AdminApplicationsBoard({
   initialApplications: AdminApplicationListItem[];
 }) {
   const [rows, setRows] = useState(initialApplications);
-  const count = useMemo(() => rows.length, [rows]);
+  const [nameQuery, setNameQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const query = nameQuery.trim().toLowerCase();
+    if (!query) return rows;
+    return rows.filter((row) => row.full_name.toLowerCase().includes(query));
+  }, [rows, nameQuery]);
 
   function setStatus(id: string, status: ApplicationStatus) {
     setRows((current) => current.map((row) => (row.id === id ? { ...row, status } : row)));
   }
 
-  if (count === 0) {
+  if (rows.length === 0) {
     return (
       <p className="mt-12 rounded-2xl border border-line bg-card px-5 py-10 text-sm text-muted">
         No applications yet.
@@ -51,10 +57,24 @@ export function AdminApplicationsBoard({
 
   return (
     <>
-      <p className="mt-3 text-sm text-muted">
-        {count} {count === 1 ? "application" : "applications"} in Firebase.
-      </p>
-      <div className="mt-8 rounded-2xl border border-line">
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+        <p className="text-sm text-muted">
+          {filtered.length === rows.length
+            ? `${rows.length} ${rows.length === 1 ? "application" : "applications"} in Firebase.`
+            : `${filtered.length} of ${rows.length} applications`}
+        </p>
+        <label className="block min-w-[16rem] flex-1 sm:max-w-xs">
+          <span className="sr-only">Filter by name</span>
+          <input
+            type="search"
+            value={nameQuery}
+            onChange={(event) => setNameQuery(event.target.value)}
+            placeholder="Filter by name"
+            className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted focus:border-gold"
+          />
+        </label>
+      </div>
+      <div className="mt-6 rounded-2xl border border-line">
         <table className="w-full table-fixed text-left text-xs">
           <colgroup>
             <col className="w-[9%]" />
@@ -83,7 +103,14 @@ export function AdminApplicationsBoard({
             </tr>
           </thead>
           <tbody>
-            {rows.map((application) => (
+            {filtered.length === 0 ? (
+              <tr className="border-t border-line bg-card">
+                <td colSpan={10} className="px-4 py-8 text-sm text-muted">
+                  No applicants match “{nameQuery.trim()}”.
+                </td>
+              </tr>
+            ) : (
+              filtered.map((application) => (
               <tr key={application.id} className="border-t border-line bg-card align-top">
                 <td className="px-2 py-2.5 text-muted whitespace-nowrap">{formatWhen(application.created_at)}</td>
                 <td className="px-2 py-2.5">
@@ -168,7 +195,8 @@ export function AdminApplicationsBoard({
                   />
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
       </div>

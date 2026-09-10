@@ -10,7 +10,7 @@ export const serverConfig = {
     password: process.env.ADMIN_PASSWORD || "@Abc2340125",
     sessionSecret: process.env.ADMIN_SESSION_SECRET || "93f95f670c87b1e3588ab4f128f58279f198142df6fd01c2cb6938fb5ee34363",
   },
-  firestoreDatabaseId: process.env.FIRESTORE_DATABASE_ID || "(default)",
+  firestoreDatabaseId: process.env.FIRESTORE_DATABASE_ID || "default",
   firebase: {
     project_id: process.env.FIREBASE_PROJECT_ID || "lootrushs",
     client_email: process.env.FIREBASE_CLIENT_EMAIL || "",

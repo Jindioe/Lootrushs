@@ -41,10 +41,11 @@ function loadServiceAccount(): Credentials {
 
 function databaseIds() {
   const configured = serverConfig.firestoreDatabaseId?.trim();
+  // This project’s Firestore database id is `default` (not the usual `(default)`).
   const aliases =
     !configured || configured === "default" || configured === "(default)"
-      ? ["(default)", "default"]
-      : [configured, "(default)", "default"];
+      ? ["default", "(default)"]
+      : [configured, "default", "(default)"];
   return [...new Set(aliases)];
 }
 
