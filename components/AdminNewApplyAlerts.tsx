@@ -3,30 +3,44 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
-const SEEN_KEY = "lr-admin-seen-applications";
-const POLL_MS = 15000;
+const SEEN_KEY = "lr-admin-latest-application-id";
+const WATCH_KEY = "lr-admin-watch-applies";
+/** Free tier: at most ~288 reads/day from alerts if left on all day. */
+const POLL_MS = 5 * 60 * 1000;
+const BACKOFF_MS = 60 * 60 * 1000;
 
-type ListedApplication = {
+type LatestApplication = {
   id: string;
+  created_at: string;
   full_name: string;
   role: string;
 };
 
-function loadSeen() {
+function loadWatching() {
   try {
-    const raw = window.localStorage.getItem(SEEN_KEY);
-    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
-    return new Set(Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : []);
+    return window.localStorage.getItem(WATCH_KEY) === "1";
   } catch {
-    return new Set<string>();
+    return false;
   }
 }
 
-function saveSeen(ids: Set<string>) {
-  window.localStorage.setItem(SEEN_KEY, JSON.stringify([...ids]));
+function saveWatching(value: boolean) {
+  window.localStorage.setItem(WATCH_KEY, value ? "1" : "0");
 }
 
-function notify(application: ListedApplication) {
+function loadSeenId() {
+  try {
+    return window.localStorage.getItem(SEEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function saveSeenId(id: string) {
+  window.localStorage.setItem(SEEN_KEY, id);
+}
+
+function notify(application: LatestApplication) {
   if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
   try {
     const notice = new Notification("New apply — Lootrushs", {
@@ -46,6 +60,7 @@ export function AdminNewApplyAlerts() {
   const pathname = usePathname();
   const primed = useRef(false);
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("denied");
+  const [watching, setWatching] = useState(false);
 
   useEffect(() => {
     if (typeof Notification === "undefined") {
@@ -53,69 +68,112 @@ export function AdminNewApplyAlerts() {
       return;
     }
     setPermission(Notification.permission);
+    setWatching(loadWatching());
   }, []);
 
   useEffect(() => {
     if (pathname === "/admin/login") return;
+    if (permission !== "granted" || !watching) return;
 
     let cancelled = false;
+    let timer: number | undefined;
+    let delay = POLL_MS;
 
     async function poll() {
       try {
-        const response = await fetch("/api/admin/applications", { cache: "no-store" });
-        if (!response.ok) return;
-        const payload = (await response.json()) as { applications?: ListedApplication[] };
-        const applications = payload.applications ?? [];
+        const response = await fetch("/api/admin/applications/latest", { cache: "no-store" });
         if (cancelled) return;
 
-        const seen = loadSeen();
-        if (!primed.current) {
-          primed.current = true;
-          for (const application of applications) seen.add(application.id);
-          saveSeen(seen);
+        if (response.status === 429 || response.status >= 500) {
+          delay = BACKOFF_MS;
+          timer = window.setTimeout(poll, delay);
+          return;
+        }
+        if (!response.ok) {
+          timer = window.setTimeout(poll, delay);
           return;
         }
 
-        let changed = false;
-        for (const application of applications) {
-          if (seen.has(application.id)) continue;
-          seen.add(application.id);
-          changed = true;
-          notify(application);
+        delay = POLL_MS;
+        const payload = (await response.json()) as { latest?: LatestApplication | null };
+        const latest = payload.latest ?? null;
+        if (!latest) {
+          timer = window.setTimeout(poll, delay);
+          return;
         }
-        if (changed) saveSeen(seen);
+
+        if (!primed.current) {
+          primed.current = true;
+          saveSeenId(latest.id);
+          timer = window.setTimeout(poll, delay);
+          return;
+        }
+
+        const seenId = loadSeenId();
+        if (seenId !== latest.id) {
+          saveSeenId(latest.id);
+          notify(latest);
+        }
       } catch {
-        /* ignore network blips */
+        delay = BACKOFF_MS;
       }
+      if (!cancelled) timer = window.setTimeout(poll, delay);
     }
 
-    void poll();
-    const timer = window.setInterval(poll, POLL_MS);
+    timer = window.setTimeout(poll, POLL_MS);
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      if (timer) window.clearTimeout(timer);
     };
-  }, [pathname]);
+  }, [pathname, permission, watching]);
 
-  if (pathname === "/admin/login" || permission === "unsupported" || permission === "granted") {
+  if (pathname === "/admin/login" || permission === "unsupported") {
     return null;
   }
 
   return (
     <div className="border-b border-line bg-raised">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3 text-sm">
-        <p className="text-muted">Turn on desktop alerts for each new apply.</p>
-        <button
-          type="button"
-          className="rounded-full bg-gold px-3 py-1.5 text-sm font-semibold text-[#1a1406] hover:bg-gold-soft"
-          onClick={async () => {
-            if (typeof Notification === "undefined") return;
-            const next = await Notification.requestPermission();
-            setPermission(next);
-          }}
-        >
-          Enable desktop alerts
-        </button>
+      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm sm:px-5">
+        <p className="text-muted">
+          Free Firestore is capped at 50k reads/day. Live checks use 1 read every 5 minutes and are
+          off by default.
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          {permission !== "granted" ? (
+            <button
+              type="button"
+              className="rounded-full border border-line px-3 py-1.5 text-sm text-ink hover:border-gold/40 hover:text-gold"
+              onClick={async () => {
+                if (typeof Notification === "undefined") return;
+                const next = await Notification.requestPermission();
+                setPermission(next);
+              }}
+            >
+              Allow desktop alerts
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className={`rounded-full px-3 py-1.5 text-sm font-semibold ${
+              watching
+                ? "border border-line text-muted hover:border-gold/40 hover:text-gold"
+                : "bg-gold text-[#1a1406] hover:bg-gold-soft"
+            }`}
+            onClick={async () => {
+              if (!watching && permission !== "granted" && typeof Notification !== "undefined") {
+                const next = await Notification.requestPermission();
+                setPermission(next);
+                if (next !== "granted") return;
+              }
+              const next = !watching;
+              saveWatching(next);
+              setWatching(next);
+              primed.current = false;
+            }}
+          >
+            {watching ? "Stop live checks" : "Watch for new applies"}
+          </button>
+        </div>
       </div>
     </div>
   );

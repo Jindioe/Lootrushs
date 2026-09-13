@@ -35,10 +35,9 @@ export default async function AdminApplicationsPage() {
           <p className="font-semibold text-ember">Firestore is not connected.</p>
           <p className="mt-3">{firestoreError}</p>
           <p className="mt-3">
-            Local: put the same three values you use on Vercel into{" "}
-            <code className="text-ink">.env.local</code>, then restart{" "}
-            <code className="text-ink">npm run dev</code>. Production: Vercel → Project → Settings
-            → Environment Variables, then redeploy.
+            Free Firestore pauses after 50k reads/day. Wait for the daily reset (usually midnight
+            Pacific), then avoid live admin checks and rapid refreshes. Local/Vercel credentials must
+            still be set in <code className="text-ink">.env.local</code> or Vercel env vars.
           </p>
         </div>
       ) : (

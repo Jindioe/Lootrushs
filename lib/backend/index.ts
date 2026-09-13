@@ -40,6 +40,7 @@ export async function submitApplication(input: SubmitApplicationInput): Promise<
 export {
   deleteApplication,
   getApplication,
+  getLatestApplication,
   listApplications,
   updateApplicationStatus,
   type ApplicationRow,

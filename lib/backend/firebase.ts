@@ -9,6 +9,8 @@ type Credentials = {
   privateKey: string;
 };
 
+const DAILY_QUOTA_COOLDOWN_MS = 6 * 60 * 60 * 1000;
+
 function normalizePrivateKey(value: string) {
   let key = value.trim();
   if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
@@ -39,20 +41,35 @@ function loadServiceAccount(): Credentials {
   return { projectId, clientEmail, privateKey };
 }
 
-function databaseIds() {
+/** Lootrushs uses a named database id `default` — not Firebase’s usual `(default)`. */
+function databaseId() {
   const configured = serverConfig.firestoreDatabaseId?.trim();
-  // This project’s Firestore database id is `default` (not the usual `(default)`).
-  const aliases =
-    !configured || configured === "default" || configured === "(default)"
-      ? ["default", "(default)"]
-      : [configured, "default", "(default)"];
-  return [...new Set(aliases)];
+  if (!configured || configured === "(default)") return "default";
+  return configured;
+}
+
+function isQuotaError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return /RESOURCE_EXHAUSTED|Quota exceeded|rateLimitExceeded|"code":\s*429/i.test(message);
+}
+
+export function formatFirestoreError(error: unknown, id = databaseId()) {
+  const message = error instanceof Error ? error.message : String(error);
+  if (isQuotaError(error)) {
+    return `Could not open Firestore database "${id}": free-tier quota exceeded (50k reads/day). Wait until the daily reset (usually midnight Pacific), or upgrade billing. Avoid leaving admin open with live checks enabled.`;
+  }
+  if (/NOT_FOUND|does not exist/i.test(message)) {
+    return `Could not open Firestore database "${id}". Set FIRESTORE_DATABASE_ID to the database id shown in Firebase Console → Firestore.`;
+  }
+  return message.startsWith("Could not open Firestore")
+    ? message
+    : `Could not open Firestore database "${id}" (${message})`;
 }
 
 const globalForFirebase = globalThis as typeof globalThis & {
   lootrushsAdminApp?: App;
   lootrushsFirestore?: Firestore;
-  lootrushsFirestorePromise?: Promise<Firestore>;
+  lootrushsQuotaBlockedUntil?: number;
 };
 
 function adminApp() {
@@ -74,49 +91,46 @@ function adminApp() {
   return globalForFirebase.lootrushsAdminApp;
 }
 
-function createClient(databaseId: string) {
+function createClient(id: string) {
   const app = adminApp();
   try {
-    return initializeFirestore(app, { preferRest: true }, databaseId);
+    return initializeFirestore(app, { preferRest: true }, id);
   } catch {
-    return getFirestore(app, databaseId);
+    return getFirestore(app, id);
   }
 }
 
-async function probe(databaseId: string) {
-  const db = createClient(databaseId);
-  await db.collection("_connection_check").doc("ok").get();
-  return db;
-}
-
-async function connectFirestore() {
-  if (globalForFirebase.lootrushsFirestore) return globalForFirebase.lootrushsFirestore;
-
-  loadServiceAccount();
-
-  let lastError: unknown;
-  for (const id of databaseIds()) {
-    try {
-      globalForFirebase.lootrushsFirestore = await probe(id);
-      console.info(`Firestore connected using database "${id}"`);
-      return globalForFirebase.lootrushsFirestore;
-    } catch (error) {
-      lastError = error;
-      console.error(`Firestore probe failed for "${id}":`, error instanceof Error ? error.message : error);
-    }
-  }
-
-  const detail = lastError instanceof Error ? lastError.message : "NOT_FOUND";
-  throw new Error(`Could not open Firestore (${detail})`);
+/** After a quota error, skip Firestore so we do not keep burning the free 50k/day cap. */
+export function markFirestoreQuota(error: unknown) {
+  if (!isQuotaError(error)) return;
+  // Prefer a long pause — free-tier daily caps and short rate limits both surface as 429.
+  globalForFirebase.lootrushsQuotaBlockedUntil = Date.now() + DAILY_QUOTA_COOLDOWN_MS;
+  console.warn(
+    `Firestore quota cooldown ${DAILY_QUOTA_COOLDOWN_MS / 3600000}h until ${new Date(globalForFirebase.lootrushsQuotaBlockedUntil).toISOString()}`,
+  );
 }
 
 export async function firestore() {
-  if (!globalForFirebase.lootrushsFirestorePromise) {
-    globalForFirebase.lootrushsFirestorePromise = connectFirestore().catch((error) => {
-      globalForFirebase.lootrushsFirestorePromise = undefined;
-      const message = error instanceof Error ? error.message : String(error);
-      throw message.startsWith("Could not open Firestore") ? error : new Error(`Could not open Firestore (${message})`);
-    });
+  const blockedUntil = globalForFirebase.lootrushsQuotaBlockedUntil ?? 0;
+  if (Date.now() < blockedUntil) {
+    throw new Error(formatFirestoreError(new Error("Quota exceeded."), databaseId()));
   }
-  return globalForFirebase.lootrushsFirestorePromise;
+
+  if (!globalForFirebase.lootrushsFirestore) {
+    loadServiceAccount();
+    const id = databaseId();
+    globalForFirebase.lootrushsFirestore = createClient(id);
+    console.info(`Firestore client ready for database "${id}"`);
+  }
+
+  return globalForFirebase.lootrushsFirestore;
+}
+
+export async function runFirestore<T>(fn: (db: Firestore) => Promise<T>): Promise<T> {
+  try {
+    return await fn(await firestore());
+  } catch (error) {
+    markFirestoreQuota(error);
+    throw new Error(formatFirestoreError(error));
+  }
 }

@@ -1,6 +1,6 @@
 import "server-only";
 import path from "path";
-import { firestore } from "./firebase";
+import { firestore, markFirestoreQuota, formatFirestoreError } from "./firebase";
 
 const MAX_BYTES = 3 * 1024 * 1024;
 const CHUNK_BYTES = 700_000;
@@ -58,27 +58,33 @@ export async function saveResume(file: File) {
   const mime = file.type || "application/octet-stream";
   const originalName = safeBase(file.name) || `resume${ext}`;
   const chunkCount = Math.max(1, Math.ceil(buffer.length / CHUNK_BYTES));
-  const fileRef = (await firestore()).collection(RESUME_COLLECTION).doc(storedName);
 
-  await fileRef.set({
-    originalName,
-    mime,
-    size: file.size,
-    chunkCount,
-    created_at: new Date(),
-  });
+  try {
+    const fileRef = (await firestore()).collection(RESUME_COLLECTION).doc(storedName);
 
-  const writes = [];
-  for (let index = 0; index < chunkCount; index += 1) {
-    const start = index * CHUNK_BYTES;
-    writes.push(
-      fileRef.collection("chunks").doc(String(index)).set({
-        index,
-        data: Buffer.from(buffer.subarray(start, start + CHUNK_BYTES)),
-      }),
-    );
+    await fileRef.set({
+      originalName,
+      mime,
+      size: file.size,
+      chunkCount,
+      created_at: new Date(),
+    });
+
+    const writes = [];
+    for (let index = 0; index < chunkCount; index += 1) {
+      const start = index * CHUNK_BYTES;
+      writes.push(
+        fileRef.collection("chunks").doc(String(index)).set({
+          index,
+          data: Buffer.from(buffer.subarray(start, start + CHUNK_BYTES)),
+        }),
+      );
+    }
+    await Promise.all(writes);
+  } catch (error) {
+    markFirestoreQuota(error);
+    throw new Error(formatFirestoreError(error));
   }
-  await Promise.all(writes);
 
   return {
     originalName,
@@ -95,19 +101,26 @@ export async function readResume(storedPath: string) {
     throw new Error("Invalid resume path");
   }
   const storedName = storedPath.slice(prefix.length);
-  const fileRef = (await firestore()).collection(RESUME_COLLECTION).doc(storedName);
-  const meta = await fileRef.get();
-  if (!meta.exists) {
-    throw new Error("Resume file is missing");
+  try {
+    const fileRef = (await firestore()).collection(RESUME_COLLECTION).doc(storedName);
+    const meta = await fileRef.get();
+    if (!meta.exists) {
+      throw new Error("Resume file is missing");
+    }
+    const chunkCount = Number(meta.data()?.chunkCount ?? 0);
+    const parts: Buffer[] = [];
+    for (let index = 0; index < chunkCount; index += 1) {
+      const chunk = await fileRef.collection("chunks").doc(String(index)).get();
+      if (!chunk.exists) throw new Error("Resume file is missing");
+      parts.push(toBuffer(chunk.data()?.data));
+    }
+    return Buffer.concat(parts);
+  } catch (error) {
+    markFirestoreQuota(error);
+    const message = error instanceof Error ? error.message : String(error);
+    if (message === "Resume file is missing" || message === "Invalid resume path") throw error;
+    throw new Error(formatFirestoreError(error));
   }
-  const chunkCount = Number(meta.data()?.chunkCount ?? 0);
-  const parts: Buffer[] = [];
-  for (let index = 0; index < chunkCount; index += 1) {
-    const chunk = await fileRef.collection("chunks").doc(String(index)).get();
-    if (!chunk.exists) throw new Error("Resume file is missing");
-    parts.push(toBuffer(chunk.data()?.data));
-  }
-  return Buffer.concat(parts);
 }
 
 export async function deleteResume(storedPath: string | null) {
@@ -116,13 +129,18 @@ export async function deleteResume(storedPath: string | null) {
   if (!storedPath.startsWith(prefix) || storedPath.includes("..")) return;
   const storedName = storedPath.slice(prefix.length);
   if (!storedName) return;
-  const fileRef = (await firestore()).collection(RESUME_COLLECTION).doc(storedName);
-  const meta = await fileRef.get();
-  const chunkCount = Number(meta.data()?.chunkCount ?? 0);
-  const deletes = [];
-  for (let index = 0; index < chunkCount; index += 1) {
-    deletes.push(fileRef.collection("chunks").doc(String(index)).delete());
+  try {
+    const fileRef = (await firestore()).collection(RESUME_COLLECTION).doc(storedName);
+    const meta = await fileRef.get();
+    const chunkCount = Number(meta.data()?.chunkCount ?? 0);
+    const deletes = [];
+    for (let index = 0; index < chunkCount; index += 1) {
+      deletes.push(fileRef.collection("chunks").doc(String(index)).delete());
+    }
+    await Promise.all(deletes);
+    await fileRef.delete();
+  } catch (error) {
+    markFirestoreQuota(error);
+    throw new Error(formatFirestoreError(error));
   }
-  await Promise.all(deletes);
-  await fileRef.delete();
 }
