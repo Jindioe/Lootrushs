@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 
 const SEEN_KEY = "lr-admin-latest-application-id";
 const WATCH_KEY = "lr-admin-watch-applies";
-/** Free tier: at most ~288 reads/day from alerts if left on all day. */
-const POLL_MS = 5 * 60 * 1000;
+/** Free tier: at most ~144 reads/day from alerts if left on all day. */
+const POLL_MS = 10 * 60 * 1000;
 const BACKOFF_MS = 60 * 60 * 1000;
 
 type LatestApplication = {
@@ -135,7 +135,7 @@ export function AdminNewApplyAlerts() {
     <div className="border-b border-line bg-raised">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm sm:px-5">
         <p className="text-muted">
-          Free Firestore is capped at 50k reads/day. Live checks use 1 read every 5 minutes and are
+          Free Firestore is capped at 50k reads/day. Live checks use 1 read every 10 minutes and are
           off by default.
         </p>
         <div className="flex flex-wrap items-center gap-2">
